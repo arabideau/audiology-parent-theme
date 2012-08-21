@@ -48,7 +48,7 @@ $options = get_option('plugin_options');
 		<![endif]-->
 	</head>
 	<body <?php body_class(); ?>>
-		<? if($options['pageWrapper']) echo '<div id="pageWrapper"'; ?>
+		<? if($options['pageWrapper']) echo '<div id="pageWrapper">'; ?>
 		<header role="banner">
 			<a id="logo" href="<?php echo home_url( '/' ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a>
 			<!-- <p><?php bloginfo( 'description' ); ?></p> -->
