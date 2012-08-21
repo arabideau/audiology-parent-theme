@@ -622,12 +622,12 @@ footer li.widget-container a#refer { background-position:-225px 0; }
 footer li.widget-container a#watch { background-position:-475px 0; }
 footer li.widget-container a#contact { background-position:-700px 0; }
 
-#twitterBar { background:url(images/twittBird.png) no-repeat; clear:both; margin:0 auto; padding-left:75px; height:50px; width:885px; overflow:hidden; position:relative;}
-.twittAddress { position:absolute; margin:0 0 0 735px; color:#fff; font-size:20px; font-weight:normal; }
-.twitterFeed { font-size:12px; height:90px; overflow:hidden; position:absolute; width:700px; top:-45px; }
-.twitterFeed li { color: #fff; left:0px; text-decoration: none; }
-.twitterFeed li .tweetBody { font-size: 12px; line-height:20px; margin:0; padding:0; width:705px; height:45px;}
-.twitterFeed li a { color: #dedede; text-decoration: none; }
+.twitterBar #twitterBar { background:url(images/twittBird.png) no-repeat; clear:both; margin:0 auto; padding-left:75px; height:50px; width:885px; overflow:hidden; position:relative;}
+.twitterBar .twittAddress { position:absolute; margin:0 0 0 735px; color:#fff; font-size:20px; font-weight:normal; }
+.twitterBar .twitterFeed { font-size:12px; height:90px; overflow:hidden; position:absolute; width:700px; top:-45px; }
+.twitterBar .twitterFeed li { color: #fff; left:0px; text-decoration: none; }
+.twitterBar .twitterFeed li .tweetBody { font-size: 12px; line-height:20px; margin:0; padding:0; width:705px; height:45px;}
+.twitterBar .twitterFeed li a { color: #dedede; text-decoration: none; }
 
 #siteMap { margin:30px auto; overflow:hidden; width:940px;}
 ul#menu-footer-menu > li { float:left; list-style:none; margin:0 50px 0 0; }
@@ -636,18 +636,30 @@ ul#menu-footer-menu > li a { color:#6B6B6B; font-size:14px; font-weight:bold; }
 ul#menu-footer-menu .sub-menu { list-style:none; }
 ul#menu-footer-menu .sub-menu li a { color: #777777; font-size: 12px; font-weight:normal; }
 
-#socialLaunch { background: url("images/socialBack.png") no-repeat scroll 0 0 transparent; float:right; height: 210px; position:relative; width: 295px; }
-#socialLaunch h4 { color: #6B6B6B; font-size: 18px; margin: 0 0 0 45px; }
-#socialLaunch a { display:block; position:absolute; height:43px; width:42px; text-indent:-9999px; top:65px; }
-#socialLaunch a#twitterBtn { background:url(images/twitterIcon.png); left:65px;}
-#socialLaunch a#faceBookBtn { background:url(images/fbIcon.png); left:135px;}
-#socialLaunch a#googleBtn { background:url(images/googleIcon.png); left:200px;}
+.twitterBar #twitterBar #socialLaunch { background: url("images/socialBack.png") no-repeat scroll 0 0 transparent; float:right; height: 210px; position:relative; width: 295px; }
+.twitterBar #twitterBar #socialLaunch h4 { color: #6B6B6B; font-size: 18px; margin: 0 0 0 45px; }
+.twitterBar #twitterBar #socialLaunch a { display:block; position:absolute; height:43px; width:42px; text-indent:-9999px; top:65px; }
+.twitterBar #twitterBar #socialLaunch a#twitterBtn { background:url(images/twitterIcon.png); left:65px;}
+.twitterBar #twitterBar #socialLaunch a#faceBookBtn { background:url(images/fbIcon.png); left:135px;}
+.twitterBar #twitterBar #socialLaunch a#googleBtn { background:url(images/googleIcon.png); left:200px;}
 
 #copyright { font-size:12px; margin:0 auto; width:940px; }
 
 #locations h4 { color:#000; }
 #locations p { color:#000; }
 #locations .location { width:275px; float:left;}
+
+.twitterPanel #socialLaunch { background:none; clear:both; float:none; width:946px; height:50px; padding:15px; }
+.twitterPanel #socialLaunch a { display:block; float:left; height:50px; margin:0 20px; position:relative; text-indent: -9999px; top:auto; width:275px; }
+.twitterPanel #socialLaunch a#twitterBtn { background:url(images/socialLaunch.png) -100px 0; left:auto; }
+.twitterPanel #socialLaunch a#faceBookBtn { background:url(images/socialLaunch.png) -450px 0; left:auto; }
+.twitterPanel #socialLaunch a#googleBtn { background:url(images/socialLaunch.png) -800px 0; left:auto; }
+
+.twitterPanel ul#menu-footer-menu { float:left; }
+.twitterPanel #twitterBar { background:none; clear:none; float:left; height:auto; width:150px; padding-left:0; }
+.twitterPanel .twitterFeed { height:auto; position:relative; top:auto; width:auto; }
+.twitterPanel h4.twittAddress { margin:0px; position:relative; }
+
 /** END Footer **/
 
 /** Form **/
