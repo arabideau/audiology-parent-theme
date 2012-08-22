@@ -5,7 +5,7 @@
   Description: Parent theme for audiology site child themes
   Author: 
   Author URI:
-  Version: v1.0.3
+  Version: v1.0.4
   Tags: custom-menu, editor-style, theme-options, threaded-comments, sticky-post, microformats, rtl-language-support, translation-ready
 */
 
@@ -636,12 +636,12 @@ ul#menu-footer-menu > li a { color:#6B6B6B; font-size:14px; font-weight:bold; }
 ul#menu-footer-menu .sub-menu { list-style:none; }
 ul#menu-footer-menu .sub-menu li a { color: #777777; font-size: 12px; font-weight:normal; }
 
-.twitterBar #twitterBar #socialLaunch { background: url("images/socialBack.png") no-repeat scroll 0 0 transparent; float:right; height: 210px; position:relative; width: 295px; }
-.twitterBar #twitterBar #socialLaunch h4 { color: #6B6B6B; font-size: 18px; margin: 0 0 0 45px; }
-.twitterBar #twitterBar #socialLaunch a { display:block; position:absolute; height:43px; width:42px; text-indent:-9999px; top:65px; }
-.twitterBar #twitterBar #socialLaunch a#twitterBtn { background:url(images/twitterIcon.png); left:65px;}
-.twitterBar #twitterBar #socialLaunch a#faceBookBtn { background:url(images/fbIcon.png); left:135px;}
-.twitterBar #twitterBar #socialLaunch a#googleBtn { background:url(images/googleIcon.png); left:200px;}
+.twitterBar #socialLaunch { background: url("images/socialBack.png") no-repeat scroll 0 0 transparent; float:right; height: 210px; position:relative; width: 295px; }
+.twitterBar #socialLaunch h4 { color: #6B6B6B; font-size: 18px; margin: 0 0 0 45px; }
+.twitterBar #socialLaunch a { display:block; position:absolute; height:43px; width:42px; text-indent:-9999px; top:65px; }
+.twitterBar #socialLaunch a#twitterBtn { background:url(images/twitterIcon.png); left:65px;}
+.twitterBar #socialLaunch a#faceBookBtn { background:url(images/fbIcon.png); left:135px;}
+.twitterBar #socialLaunch a#googleBtn { background:url(images/googleIcon.png); left:200px;}
 
 #copyright { font-size:12px; margin:0 auto; width:940px; }
 

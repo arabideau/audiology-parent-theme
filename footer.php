@@ -15,10 +15,9 @@ $options = get_option('plugin_options');
 		<?= $GLOBALS['adPanel'] ?>
 		<div id="footer-wrapper"></div>
 
-			<?php get_sidebar( 'footer' ); ?>
 			<?php if($options['socialLaunch']) : ?>
 			<footer role="contentinfo" class="twitterBar">
-
+				<?php get_sidebar( 'footer' ); ?>
 				<div id="twitterBar">
 					<ul class="twitterFeed"></ul>
 					<h4 class="twittAddress"><?= $options['twitter']; ?></h4>
@@ -34,6 +33,7 @@ $options = get_option('plugin_options');
 					</div>
 				</div>
 				<?php else: ?>
+					<?php get_sidebar( 'footer' ); ?>
 			<footer role="contentinfo" class="twitterPanel">
 				<div id="socialLaunch" class="twittHead"> 
 					<a  a target="_blank" href="http://twitter.com/<?= str_replace('@', '', $options['twitter']) ?>" id="twitterBtn">Twitter</a>

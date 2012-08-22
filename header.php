@@ -9,6 +9,11 @@
  * @since Boilerplate 1.0
  */
 $options = get_option('plugin_options');
+$path = dirname(__FILE__);
+$parent_dir = str_replace(get_bloginfo('url'), '', get_bloginfo('template_directory'));
+$child_dir = str_replace(get_bloginfo('url'), '', get_bloginfo('stylesheet_directory'));
+$url = str_replace($parent_dir, $child_dir, $path);
+$path = $url.'/';
 ?>
 <!DOCTYPE html>
 <!--[if lt IE 7 ]><html <?php language_attributes(); ?> class="no-js ie ie6 lte7 lte8 lte9"><![endif]-->
@@ -52,7 +57,7 @@ $options = get_option('plugin_options');
 		<header role="banner">
 			<a id="logo" href="<?php echo home_url( '/' ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a>
 			<!-- <p><?php bloginfo( 'description' ); ?></p> -->
-			<?php include('header_links.php'); ?>
+			<?php if(!include($path.'header_links.php')) include('header_links.php'); ?>
 		</header>
 		<nav id="access" role="navigation">
 			<?php /* Our navigation menu.  If one isn't filled out, wp_nav_menu falls back to wp_page_menu.  The menu assiged to the primary position is the one used.  If none is assigned, the menu with the lowest ID is used.  */ ?>
