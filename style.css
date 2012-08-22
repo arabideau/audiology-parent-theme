@@ -5,7 +5,7 @@
   Description: Parent theme for audiology site child themes
   Author: 
   Author URI:
-  Version: v1.0.4
+  Version: v1.0.5
   Tags: custom-menu, editor-style, theme-options, threaded-comments, sticky-post, microformats, rtl-language-support, translation-ready
 */
 
@@ -423,7 +423,7 @@ body.home.page #content { background: url(images/adShadow.png) repeat-y scroll 0
 /** START Header **/
 
 header #logo { background:url(images/clinicLogo.png) center left no-repeat; display:block; height:92px; margin:0 0 0 35px; text-indent:-9999px; width:400px; }
-header #headerLinks { background:url(images/topIcons.png) no-repeat; height:70px; left:765px; position:absolute; top:10px; width:210px; }
+header #headerLinks { background:url(images/topIcons.png) no-repeat; height:76px; left:765px; position:absolute; top:10px; width:210px; }
 
 header #headerLinks a { display:block; float:left; height:70px; width:62px; text-indent: -9999px; }
 
