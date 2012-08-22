@@ -110,6 +110,7 @@
 			add_settings_field('emailSuccessImage', 'Email success image:', 'email_success_image', 'audiology-admin', 'main_section');
 			add_settings_field('pageWrapper', 'Include Page Wrapper:', 'page_wrapper', 'audiology-admin', 'main_section');
 			add_settings_field('socialLaunch', 'Use Social Launch style footer?:', 'social_launch', 'audiology-admin', 'main_section');
+			add_settings_field('clinicLocations', 'Enter HTML for contact popup:', 'clinic_locations', 'audiology-admin', 'main_section');
 		}
 		add_action('admin_init', 'register_and_build_fields');
 	endif; // register_and_build_fields
@@ -421,6 +422,16 @@
 			$value = (isset($options['socialLaunch']) && $options['socialLaunch'] == 1) ? 'checked="checked"' : '';
 			echo '<input type="checkbox" name="plugin_options[socialLaunch]" '.$value.' value="1" />';
 			echo '<p>Use social launch style footer?</p>';
+		}
+	endif;
+
+	// callback fn for socialLaunch
+	if ( ! function_exists( 'clinic_locations') ):
+		function clinic_locations() {
+			$options = get_option('plugin_options');
+			$value = (isset($options['clinicLocations'])) ? $options['clinicLocations'] : '';
+			echo '<textarea name="plugin_options[clinicLocations]">'.$value.'</textarea>';
+			echo '<p>Enter HTML for clinic locations in contact popup.</p>';
 		}
 	endif;
 

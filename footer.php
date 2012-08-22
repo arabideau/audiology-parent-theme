@@ -15,7 +15,7 @@ $options = get_option('plugin_options');
 		<?= $GLOBALS['adPanel'] ?>
 		<div id="footer-wrapper"></div>
 
-			<?php if($options['socialLaunch']) : ?>
+			<?php if($options['socialLaunch'] == 1) : ?>
 			<footer role="contentinfo" class="twitterBar">
 				<?php get_sidebar( 'footer' ); ?>
 				<div id="twitterBar">
@@ -33,8 +33,8 @@ $options = get_option('plugin_options');
 					</div>
 				</div>
 				<?php else: ?>
-					<?php get_sidebar( 'footer' ); ?>
 			<footer role="contentinfo" class="twitterPanel">
+					<?php get_sidebar( 'footer' ); ?>
 				<div id="socialLaunch" class="twittHead"> 
 					<a  a target="_blank" href="http://twitter.com/<?= str_replace('@', '', $options['twitter']) ?>" id="twitterBtn">Twitter</a>
 					<a  a target="_blank" href="http://www.facebook.com/pages/<?= $options['facebook_name'] ?>/<?= $options['facebook_id'] ?>" id="faceBookBtn">Facebook</a>
@@ -92,27 +92,7 @@ $options = get_option('plugin_options');
 			<iframe id="ytFrame" width="458" height="255" src="http://www.youtube.com/embed/videoseries?list=PLEF1CA89616F11482&hl=en_US&rel=0" frameborder="0" allowfullscreen></iframe>	
 		</div>
 		<div id="locations" class="modal">
-			<div class="location">
-				<h4>Glendale</h4>
-				<p>
-				Physician's Medical Terrace<br />
-				1505 Wilson Terrace # 270<br />
-				Glendale, Ca 91206<br />
-				Main: 818.241.2101<br />
-				Fax: 818.241.2166
-				</p>
-			</div>
-
-			<div class="location">
-				<h4>Pasadena</h4>
-				<p>
-				Cotton South Building<br />
-				50 Alessandro Place #230<br />
-				Pasadena, Ca 91105<br />
-				Main: 626.577.5550<br />
-				Fax: 626.577.5544
-				</p>
-			</div>		
+			<?php echo $options['clinicLocations']; ?>
 		</div>
 		<script type="text/javascript">
 		jQuery(function() {

@@ -25,7 +25,7 @@ get_header(); ?>
 	$categorySlug = $theCategory->slug;
 	$catID = $theCategory->cat_ID; ?>
 	<?php echo get_sub_nav($catID, $categorySlug, 'sub-nav '.$categorySlug); ?>
-	<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+	<article id="post-<?php the_ID(); ?>" <?php post_class($categorySlug); ?>>
 		<?php get_sidebar(); ?>
 		<h1><?=  get_post_meta($post->ID, 'audiology_page_title', true) ? get_post_meta($post->ID, 'audiology_page_title', true) : the_title(); ?></h1>
 		<div class="entry-content">

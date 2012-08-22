@@ -22,9 +22,18 @@ jQuery(function() {
 
   jQuery('#contact').click(function(e) {
     e.preventDefault();
-    jQuery('#locations').modal({ dataCss: { width:'550px', height:'225px' }, containerCss: { width:'550px', height:'225px' } });
+    num = jQuery('#locations .location').length;
+    theWidth = num*275+'px';
+    jQuery('#locations').modal({ dataCss: { width:theWidth, height:'225px' }, containerCss: { width:theWidth, height:'225px' } });
   });
 
+  jQuery('#tabs').tabs();
+
+  jQuery('.ques').click(function(e) {
+    e.preventDefault();
+    jQuery(this).parent().siblings().children('.answer').hide();
+    jQuery(this).next('.answer').toggle();
+  })
 
 	jQuery('ul.sub-nav li a').hover(function() {
 		jQuery(this).animate({ top : "-=15px", opacity: .85 }, 150); 
@@ -54,7 +63,7 @@ jQuery(function() {
     jQuery(this).parent().hide();
   });
 
-  jQuery('.moreLink').click(function() {
+  jQuery('.our-team .moreLink').click(function() {
    if(jQuery(this).text() == "Read more"){
       jQuery(this).text('Read less');
       jQuery(this).css('background-position', '0 -24px');

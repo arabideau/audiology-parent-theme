@@ -560,6 +560,7 @@ function get_showcase() {
 
 function my_scripts_method() {
     wp_enqueue_script( 'jquery' );
+    wp_enqueue_script('jquery-ui', get_template_directory_uri().'/js/jquery-ui.js', array('jquery'));
     wp_enqueue_script( 'simplemodal', get_template_directory_uri().'/js/simplemodal.js', array('jquery'));
     wp_enqueue_script( 'swfobject' );
     wp_enqueue_script( 'script', get_template_directory_uri().'/js/script.js', array('jquery', 'swfobject'));
@@ -569,7 +570,7 @@ add_action('wp_enqueue_scripts', 'my_scripts_method');
 
 function get_sub_nav($catID, $theSlug, $theClass = "") {
 	global $wpdb;
-	$pages = $wpdb->get_results("SELECT wp_posts.post_title, wp_posts.post_name, wp_posts.menu_order, text.meta_value as sub_nav_text FROM wp_posts INNER JOIN wp_postmeta ON (wp_posts.ID = wp_postmeta.post_id AND wp_postmeta.meta_key = 'audiology_sub_nav_display' AND wp_postmeta.meta_value = 0) INNER JOIN wp_term_relationships ON (wp_posts.ID = wp_term_relationships.object_id) INNER JOIN wp_term_taxonomy ON (wp_term_relationships.term_taxonomy_id = wp_term_taxonomy.term_taxonomy_id) INNER JOIN wp_postmeta as text ON (wp_posts.ID = text.post_id AND text.meta_key = 'audiology_sub_nav_text') WHERE wp_term_taxonomy.term_id = '$catID' ORDER BY wp_posts.menu_order ASC"); 
+	$pages = $wpdb->get_results("SELECT wp_posts.post_title, wp_posts.post_name, wp_posts.menu_order, text.meta_value as sub_nav_text FROM wp_posts INNER JOIN wp_postmeta ON (wp_posts.ID = wp_postmeta.post_id AND wp_postmeta.meta_key = 'audiology_sub_nav_display' AND wp_postmeta.meta_value = 0) INNER JOIN wp_term_relationships ON (wp_posts.ID = wp_term_relationships.object_id) INNER JOIN wp_term_taxonomy ON (wp_term_relationships.term_taxonomy_id = wp_term_taxonomy.term_taxonomy_id) INNER JOIN wp_postmeta as text ON (wp_posts.ID = text.post_id AND text.meta_key = 'audiology_sub_nav_text') WHERE wp_posts.post_status = 'publish' AND wp_term_taxonomy.term_id = '$catID' ORDER BY wp_posts.menu_order ASC"); 
 	$content .= "<ul";
 	if($theClass != '') $content .= ' class="'.$theClass.'"';
 	$content .= ">";
