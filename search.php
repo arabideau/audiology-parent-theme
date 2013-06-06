@@ -8,12 +8,13 @@
  */
 
 get_header(); ?>
+
 			<article>
-				<?php get_sidebar(); ?>
 
 <?php if ( have_posts() ) : ?>
 
 				<h1><?php printf( __( 'Search Results for: %s', 'boilerplate' ), '' . get_search_query() . '' ); ?></h1>
+				<? get_sidebar(); ?>	
 				<div class="entry-content">
 
 				<?php
@@ -25,6 +26,7 @@ get_header(); ?>
 				?>
 <?php else : ?>
 		<h1><?php _e( 'Nothing Found', 'boilerplate' ); ?></h1>
+		<? get_sidebar(); ?>	
 		<div class="entry-content">
 			<p><?php _e( 'Sorry, but nothing matched your search criteria. Please try again with some different keywords.', 'boilerplate' ); ?></p>
 		</div><!-- .entry-content -->

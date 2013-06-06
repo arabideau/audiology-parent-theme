@@ -8,12 +8,16 @@
  * @subpackage Boilerplate
  * @since Boilerplate 1.0
  */
-$options = get_option('plugin_options');
+session_start();
+if (substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip')) ob_start("ob_gzhandler"); else ob_start();
+
+$options = get_option('audiology_options');
 $path = dirname(__FILE__);
 $parent_dir = str_replace(get_bloginfo('url'), '', get_bloginfo('template_directory'));
 $child_dir = str_replace(get_bloginfo('url'), '', get_bloginfo('stylesheet_directory'));
 $url = str_replace($parent_dir, $child_dir, $path);
 $path = $url.'/';
+$device = new Mobile_Detect;
 ?>
 <!DOCTYPE html>
 <!--[if lt IE 7 ]><html <?php language_attributes(); ?> class="no-js ie ie6 lte7 lte8 lte9"><![endif]-->
@@ -23,6 +27,7 @@ $path = $url.'/';
 <!--[if (gt IE 9)|!(IE)]><!--><html <?php language_attributes(); ?> class="no-js"><!--<![endif]-->
 	<head>
 		<meta charset="<?php bloginfo( 'charset' ); ?>" />
+
 		<title><?php
 			/*
 			 * Print the <title> tag based on what is being viewed.
@@ -31,9 +36,9 @@ $path = $url.'/';
 			 */
 			wp_title( '|', true, 'right' );
 		?></title>
-		<link rel="profile" href="http://gmpg.org/xfn/11" />
-		<link rel="stylesheet" href="<?php bloginfo( 'stylesheet_url' ); ?>" />
-		<link rel="stylesheet" href="<?php bloginfo( 'template_directory' ); ?>/css/jquery-ui.css" />
+		<!--[if IE 6]>
+		<link rel="stylesheet" href="<?php bloginfo( 'template_directory' ); ?>/css/ie.css" />
+		<![endif]-->
 		<link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>" />
 <?php
 		/* We add some JavaScript to pages with the comment form
@@ -52,18 +57,21 @@ $path = $url.'/';
 		<!--[if lt IE 7]>
 		<script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE7.js">IE7_PNG_SUFFIX=".png";</script>
 		<![endif]-->
+
 	</head>
 	<body <?php body_class(); ?>>
+		<? if($device->isMobile()) { ?>
+		<div class="mobileLink"><a href="<? bloginfo('url'); ?>/?mobileoverride=0">Return to Mobile Site</a></div>
+		<?php } ?>
 		<? if($options['pageWrapper']) echo '<div id="pageWrapper">'; ?>
 		<header role="banner">
 			<a id="logo" href="<?php echo home_url( '/' ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a>
 			<!-- <p><?php bloginfo( 'description' ); ?></p> -->
-			<?php if(!include($path.'header_links.php')) include('header_links.php'); ?>
+			<?= eval('?>'.$options['headerLinks']); ?>
 		</header>
 		<nav id="access" role="navigation">
 			<?php /* Our navigation menu.  If one isn't filled out, wp_nav_menu falls back to wp_page_menu.  The menu assiged to the primary position is the one used.  If none is assigned, the menu with the lowest ID is used.  */ ?>
 			<?php wp_nav_menu( array( 'container_class' => 'menu-header', 'theme_location' => 'primary' ) ); ?>
 			<?php get_search_form(); ?>
 		</nav><!-- #access -->
-
 		<section id="content" role="main">

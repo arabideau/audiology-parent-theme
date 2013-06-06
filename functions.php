@@ -38,6 +38,7 @@
  * @since boilerplate 1.0
  */
 
+
 /**
  * Set the content width based on the theme's design and stylesheet.
  *
@@ -428,6 +429,17 @@ function boilerplate_widgets_init() {
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
+
+	// Area 7, located in the footer. Empty by default.
+	register_sidebar( array(
+		'name' => __( 'Fifth Footer Widget Area', 'boilerplate' ),
+		'id' => 'fifth-footer-widget-area',
+		'description' => __( 'The fifth footer widget area', 'boilerplate' ),
+		'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
+		'after_widget' => '</li>',
+		'before_title' => '<h3 class="widget-title">',
+		'after_title' => '</h3>',
+	) );
 }
 /** Register sidebars by running boilerplate_widgets_init() on the widgets_init hook. */
 add_action( 'widgets_init', 'boilerplate_widgets_init' );
@@ -545,39 +557,102 @@ if ( function_exists( 'add_theme_support' ) ) {
 	add_theme_support( 'post-thumbnails' );
 }
 
-function get_showcase() {
-	return array (
-	array('link' => '/our-team/physicians/', 'image' => 'adScene01.png'),
-	array('link' => '/nose-mouth/', 'image' => 'adScene02.png'),
-	array('link' => '/pediatric/asthma/', 'image' => 'adScene03.png'),
-	array('link' => '/allergy/', 'image' => 'adScene04.png'),
-	array('link' => '/nose-mouth/snoring/', 'image' => 'adScene05.png'),
-	array('link' => '/throat/reflux/', 'image' => 'adScene06.png'),
-	array('link' => '/ears/ringing-in-ear/', 'image' => 'adScene07.png'),
-	array('link' => '/throat/sore-throat/', 'image' => 'adScene08.png')
-	);
+if (!function_exists('get_showcase')) {
+	function get_showcase() {
+		return array (
+		array('link' => '/our-team/', 'image' => 'adScene01.png'),
+		array('link' => '/nose-mouth/', 'image' => 'adScene02.png'),
+		array('link' => '/pediatric/asthma/', 'image' => 'adScene03.png'),
+		array('link' => '/allergy/', 'image' => 'adScene04.png'),
+		array('link' => '/nose-mouth/snoring/', 'image' => 'adScene05.png'),
+		array('link' => '/throat/reflux/', 'image' => 'adScene06.png'),
+		array('link' => '/ears/ringing-in-ear/', 'image' => 'adScene07.png'),
+		array('link' => '/throat/sore-throat/', 'image' => 'adScene08.png')
+		);
+	}
 }
 
+function mobile_template() {
+
+	$device = new Mobile_Detect;
+
+	if($device->isMobile()) {
+		if(isset($_GET['mobileoverride']) && $_GET['mobileoverride'] == 1) $_SESSION['mobileoverride'] = 1;
+		elseif (isset($_GET['mobileoverride']) && $_GET['mobileoverride'] == 0) $_SESSION['mobileoverride'] = 0;
+
+
+		if($_SESSION['mobileoverride'] != 1) {
+			include (TEMPLATEPATH . '/mobile.php');
+    		exit;
+		}
+	}
+}
+ 
+add_action('template_redirect', 'mobile_template');
+
+function mobile_map( $atts ) {
+	extract( shortcode_atts( array('address' =>''), $atts ) );
+	$device = new Mobile_Detect;
+	if($device->isIOS())
+		$link = 'http://maps.apple.com/?q=loc:'.$address;
+	elseif($device->isAndroidOS())
+		$link = 'geo:0,0?q='.$address;
+	else
+		$link = 'http://maps.google.com/?q=loc:'.$address;
+	return "<a href=\"$link\" class=\"mapLink\">View Map</a>";
+}
+add_shortcode( 'mobile_map', 'mobile_map' );
+
 function my_scripts_method() {
+	$device = new Mobile_Detect;
+	global $blog_id;
+	$options = get_option('plugin_options');
     wp_enqueue_script( 'jquery' );
     wp_enqueue_script('jquery-ui', get_template_directory_uri().'/js/jquery-ui.js', array('jquery'));
     wp_enqueue_script( 'simplemodal', get_template_directory_uri().'/js/simplemodal.js', array('jquery'));
+    wp_enqueue_script( 'validate', get_template_directory_uri().'/js/validate.js', array('jquery'));
     wp_enqueue_script( 'swfobject' );
     wp_enqueue_script( 'script', get_template_directory_uri().'/js/script.js', array('jquery', 'swfobject'));
+
+    if($device->isMobile() && $_SESSION['mobileoverride'] != 1) {
+    	wp_enqueue_style( 'style', get_bloginfo('stylesheet_directory').'/mobile.css' );
+    } else {
+    	wp_enqueue_style( 'style', get_bloginfo('stylesheet_directory').'/style.css' );
+    	wp_enqueue_style( 'jquery-ui', get_bloginfo( 'template_directory' ).'/css/jquery-ui.css' );
+    	wp_enqueue_style( 'print', get_bloginfo('template_directory').'/css/print.css', array(), '', 'print');
+	} 
 }    
  
 add_action('wp_enqueue_scripts', 'my_scripts_method');
 
-function get_sub_nav($catID, $theSlug, $theClass = "") {
-	global $wpdb;
-	$pages = $wpdb->get_results("SELECT wp_posts.post_title, wp_posts.post_name, wp_posts.menu_order, text.meta_value as sub_nav_text FROM wp_posts INNER JOIN wp_postmeta ON (wp_posts.ID = wp_postmeta.post_id AND wp_postmeta.meta_key = 'audiology_sub_nav_display' AND wp_postmeta.meta_value = 0) INNER JOIN wp_term_relationships ON (wp_posts.ID = wp_term_relationships.object_id) INNER JOIN wp_term_taxonomy ON (wp_term_relationships.term_taxonomy_id = wp_term_taxonomy.term_taxonomy_id) INNER JOIN wp_postmeta as text ON (wp_posts.ID = text.post_id AND text.meta_key = 'audiology_sub_nav_text') WHERE wp_posts.post_status = 'publish' AND wp_term_taxonomy.term_id = '$catID' ORDER BY wp_posts.menu_order ASC"); 
+function get_sub_nav($catID, $theSlug, $theClass = "", $parentSlug, $theParent = 0) {
+	global $wpdb, $blog_id;
+	$id = $blog_id == 1 ? 'wp_' : 'wp_'.$blog_id.'_';
+		
+	if (!$theParent)
+		$theQuery = "SELECT ".$id."posts.ID, ".$id."posts.post_title, ".$id."posts.post_name, ".$id."posts.menu_order, text.meta_value as sub_nav_text FROM ".$id."posts INNER JOIN ".$id."postmeta ON (".$id."posts.ID = ".$id."postmeta.post_id AND ".$id."postmeta.meta_key = 'audiology_sub_nav_display' AND ".$id."postmeta.meta_value = 0) INNER JOIN ".$id."term_relationships ON (".$id."posts.ID = ".$id."term_relationships.object_id) INNER JOIN ".$id."term_taxonomy ON (".$id."term_relationships.term_taxonomy_id = ".$id."term_taxonomy.term_taxonomy_id) INNER JOIN ".$id."postmeta as text ON (".$id."posts.ID = text.post_id AND text.meta_key = 'audiology_sub_nav_text') WHERE ".$id."posts.post_status = 'publish' AND ".$id."term_taxonomy.term_id = '$catID' AND ".$id."posts.menu_order < '2' ORDER BY ".$id."posts.menu_order ASC";
+	else 
+		$theQuery = "SELECT ".$id."posts.ID, ".$id."posts.post_title, ".$id."posts.post_name, ".$id."posts.menu_order, text.meta_value as sub_nav_text FROM ".$id."posts INNER JOIN ".$id."postmeta ON (".$id."posts.ID = ".$id."postmeta.post_id AND ".$id."postmeta.meta_key = 'audiology_sub_nav_display' AND ".$id."postmeta.meta_value = 0) INNER JOIN ".$id."term_relationships ON (".$id."posts.ID = ".$id."term_relationships.object_id) INNER JOIN ".$id."term_taxonomy ON (".$id."term_relationships.term_taxonomy_id = ".$id."term_taxonomy.term_taxonomy_id) INNER JOIN ".$id."postmeta as text ON (".$id."posts.ID = text.post_id AND text.meta_key = 'audiology_sub_nav_text') WHERE ".$id."posts.post_status = 'publish' AND ".$id."term_taxonomy.term_id = '$catID' ORDER BY ".$id."posts.menu_order ASC";
+
+	$pages = $wpdb->get_results($theQuery);
+	
+	//$content .= $theQuery;
+	
 	$content .= "<ul";
 	if($theClass != '') $content .= ' class="'.$theClass.'"';
 	$content .= ">";
+	
 	foreach($pages as $page){
-
-		$content .= '<li><a href="'.get_bloginfo('url').'/'.$theSlug.'/'.$page->post_name.'/">'.$page->sub_nav_text.'</a></li>';
+		if(!$theParent) {
+			if($page->menu_order != 0)
+				$content .= '<li><a href="'.get_permalink($page->ID).'">'.$page->post_title.'</a></li>';
+			else
+				$content .= '<li><a href="'.get_permalink($page->ID).'">Overview</a></li>';			
+		} else {
+			$content .= '<li><a href="'.get_permalink($page->ID).'">'.$page->sub_nav_text.'</a></li>';
+		}
 	}
+
 	$content .= "</ul>";
 	return $content;
 }
@@ -632,7 +707,6 @@ function audiology_body_page_name_class( $classes ) {
 
 add_filter('body_class', 'audiology_body_page_name_class');
 
-
 add_action( 'add_meta_boxes', 'audiology_add_custom_box' );
 add_action( 'save_post', 'audiology_save_postdata' );
 
@@ -655,6 +729,7 @@ function audiology_title_variations_custom_box() {
 	} 
 
 	?>
+	<input type="hidden" name="audiology_update" value="true" />
 	<div>
 		<label for="audiology_page_title">Page Title</label>
 		<input type="text" name="audiology_page_title" value="<?= isset($meta['audiology_page_title'])?$meta['audiology_page_title']:$post->post_title; ?>" />
@@ -665,7 +740,11 @@ function audiology_title_variations_custom_box() {
 	</div>
 	<div>
 		<label for="audiology_sub_nav_display">Hide in sub nav?</label>
-		<input type="checkbox" name="audiology_sub_nav_display" value="1" <?= ($meta['audiology_sub_nav_display']) ? "checked" : "" ?> />
+		<input type="checkbox" name="audiology_sub_nav_display" value="1" <?= ($meta['audiology_sub_nav_display'] == 1) ? "checked" : "" ?> />
+	</div>
+	<div>
+		<label for="audiology_mobile_display">Display on mobile site?</label>
+		<input type="checkbox" name="audiology_mobile_display" value="1" <?= ($meta['audiology_mobile_display'] == 1) ? "checked" : "" ?> />
 	</div>
 
 <? }
@@ -675,7 +754,7 @@ function audiology_save_postdata($post_id) {
 	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) 
 	      return;
 	  // Check permissions
-	  if ( 'page' == $_POST['post_type'] ) {
+	  if ( 'page' == $_POST['post_type'] && $_POST['audiology_update'] == true) {
 	    if ( !current_user_can( 'edit_page', $post_id ) )
 	        return;
 	    	// verify this came from the our screen and with proper authorization,
@@ -683,17 +762,22 @@ function audiology_save_postdata($post_id) {
 	    update_post_meta($post_id, 'audiology_sub_nav_text', $_POST['audiology_sub_nav_text']);
 	    if ($_POST['audiology_sub_nav_display']) update_post_meta($post_id, 'audiology_sub_nav_display', 1);
 		else update_post_meta($post_id, 'audiology_sub_nav_display', 0);
+	    if ($_POST['audiology_mobile_display']) update_post_meta($post_id, 'audiology_mobile_display', 1);
+		else update_post_meta($post_id, 'audiology_mobile_display', 0);
 
 	 } 	
 }
 
+
 add_action('init', 'process_post');
 
 function process_post(){
-	if(isset($_POST['scheduleVisit'])) {
-		$options = get_option('plugin_options');
+	if(isset($_POST['scheduleVisit']) && isset($_POST['human'])) {
+		$device = new Mobile_Detect;
+		$options = get_option('audiology_options');
  		$to      = $options['scheduleVisit_email'];
-		$subject = 'Email Inquiry from '.bloginfo('url');
+ 		if($device->isMobile()) $subject = 'Mobile Email Inquiry from '.get_bloginfo('url');
+		else $subject = 'Email Inquiry from '.get_bloginfo('url');
 		//$message = 'Message from: ' .$_POST['name'] . ' <' . $_POST['email'] . '>: ' . "\r\n" . $_POST['message'];
 		$message = '
 		<html>
@@ -716,9 +800,64 @@ function process_post(){
 			    </tr>
 			    <tr>
 			      <td>Preferred Day: </td><td>'.$_POST['Day'].'</td>
-			    </tr>
+			    </tr>';
+			if(isset($_POST['callbackTime'])) {
+				$message.='
 			    <tr>
 			      <td>Preferred Callback Time: </td><td>'.$_POST['callbackTime'].'</td>
+			    </tr>';
+			}
+			if(isset($_POST['visitType'])) {
+				$message .='
+				<tr>
+					<td>Visit Type: </td><td>'.$_POST['visitType'].'</td>
+				</tr>';
+			}
+			if(isset($_POST['office'])) {
+				$message .='
+				<tr>
+					<td>Office: </td><td>'.$_POST['office'].'</td>
+				</tr>';
+			}				
+			 $message .= ' </table>
+			</body>
+		</html>';
+		$headers = 'From: '. $options['scheduleVisit_fromEmail'] . "\r\n" .
+	    'Reply-To: '. $options['scheduleVisit_fromEmail'] . "\r\n" .
+	    "Return-Path:<arabideau@fuelmedical.com>\r\n" .
+	    'MIME-Version: 1.0' . "\r\n" .
+		'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+		if(mail($to, $subject, $message, $headers)) wp_redirect(home_url().'/submit-thank-you/');		
+	} elseif(isset($_POST['referFriend'])) {
+		$options = get_option('audiology_options');
+ 		$to      = $options['scheduleVisit_email'];
+		$subject = 'Friend Referral from '.get_bloginfo('url');
+		//$message = 'Message from: ' .$_POST['name'] . ' <' . $_POST['email'] . '>: ' . "\r\n" . $_POST['message'];
+		$message = '
+		<html>
+			<head>
+		  		<title>Friend Referral</title>
+			</head>
+			<body>
+			  <table>
+			    <tr>
+			      <td>Referrer Name: </td><td>'.$_POST['yourName'].'</td>
+			    </tr>
+			    <tr>
+			      <td>Referrer Email: </td><td>'.$_POST['yourEmail'].'</td>
+			    </tr>
+			    <tr>
+			      <td>Referrer Phone: </td><td>'.$_POST['yourPhone'].'</td>
+			    </tr>
+				<tr><td colspan=3>&nbsp;</td></tr>
+			    <tr>
+			      <td>Referree Name: </td><td>'.$_POST['theirName'].'</td>
+			    </tr>
+			    <tr>
+			      <td>Referree Email: </td><td>'.$_POST['theirEmail'].'</td>
+			    </tr>
+			    <tr>
+			      <td>Referree Phone: </td><td>'.$_POST['theirPhone'].'</td>
 			    </tr>
 			  </table>
 			</body>
@@ -728,25 +867,44 @@ function process_post(){
 	    "Return-Path:<arabideau@fuelmedical.com>\r\n" .
 	    'MIME-Version: 1.0' . "\r\n" .
 		'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-		if(mail($to, $subject, $message, $headers)) wp_enqueue_script( 'modal', get_template_directory_uri().'/js/modal.js', array('jquery'));
+		if(mail($to, $subject, $message, $headers)) {
+			$subject = "Thank you for referring your friend!";
+			$message = "<html><p>Thank you for referring your friend or family member. We appreciate the recommendation and are honored by your kind words about our medical practice. We will be in touch with your friend or family member within the next day.</p>
+			<p>Additionally we will be in touch with you regarding your referral reward soon.</p></html>";
+			mail($_POST['yourEmail'], $subject, $message, $headers);
+			wp_enqueue_script( 'modal', get_template_directory_uri().'/js/modalReferral.js', array('jquery'));
+		}
 	}
 }
 
-
 function audiology_socials($content){
 	global $post;
-	$options = get_option('plugin_options');
+	$options = get_option('audiology_options');
 	switch($post->post_name) {
+		case 'social-hub':
 		case 'twitter':
-			if(!empty($options['twitter'])) $content .= '<div id="twitterBtn"><a href="https://twitter.com/#!/'.str_replace('@', '', $options['twitter']).'"  class="twitter-follow-button" data-show-count="false" data-size="large">Follow @'.str_replace('@', '', $options['twitter']).'</a></div>
+			if(!empty($options['twitter'])) { $content .= '<div id="twitterBtn"><a href="https://twitter.com/#!/'.str_replace('@', '', $options['twitter']).'"  class="twitter-follow-button" data-show-count="false" data-size="large">Follow @'.str_replace('@', '', $options['twitter']).'</a></div>
 			<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 			<img src="'.get_bloginfo('stylesheet_directory').'/images/ipTwitter.png" class="twitterBird" />
 			<ul id="twitter_update_list"> 
 				<li>Twitter feed loading...</li>
 			</ul> 
 			</div>
-			<script type="text/javascript" src="http://twitter.com/statuses/user_timeline/'.str_replace('@', '', $options['twitter']).'.json?callback=twitterCallback2&count=8"></script>';
-			else $content .= "<p>This page is where you'll find our Twitter profile and updates. Please check back soon!</p>";
+			<script type="text/javascript">
+			jQuery.getJSON("https://api.twitter.com/1/statuses/user_timeline.json?screen_name='.str_replace("@", "", $options['twitter']).'&exclude_replies=true&count=3&callback=?",
+				function(data){
+					jQuery("#twitter_update_list").html("");
+					jQuery.each(data, function (i, item) {
+						var tweetText = item.text;
+						tweetText = tweetText.replace(/http:\/\/\S+/g, \'<a href="$&" target="_blank">$&</a>\');
+						tweetText = tweetText.replace(/(@)(\w+)/g, \' $1<a href="http://twitter.com/$2" target="_blank">$2</a>\');
+						tweetText = tweetText.replace(/(#)(\w+)/g, \' $1<a href="http://search.twitter.com/search?q=%23$2" target="_blank">$2</a>\');
+						jQuery("#twitter_update_list").append(\'<li><div class="tweetBody">\'+tweetText+\'</div></li>\');
+					});
+			    }
+			);
+			</script>';
+			} else $content .= "<p>This page is where you'll find our Twitter profile and updates. Please check back soon!</p>";
 			break;
 
 		case 'ipurepatient-twitter':
@@ -757,12 +915,27 @@ function audiology_socials($content){
 				<li>Twitter feed loading...</li>
 			</ul> 
 			</div>
-			<script type="text/javascript" src="http://twitter.com/statuses/user_timeline/ipurepatient.json?callback=twitterCallback2&count=8"></script>';
+			<script type="text/javascript">
+			jQuery.getJSON("https://api.twitter.com/1/statuses/user_timeline.json?screen_name=ipurepatient&exclude_replies=true&count=3&callback=?",
+				function(data){
+					jQuery("#twitter_update_list").html("");
+					jQuery.each(data, function (i, item) {
+						var tweetText = item.text;
+						tweetText = tweetText.replace(/http:\/\/\S+/g, \'<a href="$&" target="_blank">$&</a>\');
+						tweetText = tweetText.replace(/(@)(\w+)/g, \' $1<a href="http://twitter.com/$2" target="_blank">$2</a>\');
+						tweetText = tweetText.replace(/(#)(\w+)/g, \' $1<a href="http://search.twitter.com/search?q=%23$2" target="_blank">$2</a>\');
+						jQuery("#twitter_update_list").append(\'<li><div class="tweetBody">\'+tweetText+\'</div></li>\');
+					});
+			    }
+			);
+			</script>';
 			break;
 
 		case 'facebook':
-			if(!empty($options['facebook_name']) && !empty($options['facebook_id']))
+			if(!empty($options['facebook_name']) && $options['facebook_id'] != '')
 			$content.='<iframe src="//www.facebook.com/plugins/likebox.php?href=http%3A%2F%2Fwww.facebook.com%2Fpages%2F'.$options['facebook_name'].'%2F'.$options['facebook_id'].'&amp;width=550&amp;height=590&amp;colorscheme=light&amp;show_faces=true&amp;border_color&amp;stream=true&amp;header=true&amp;appId=134738089947317" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:550px; height:590px;" allowTransparency="true"></iframe>';
+			elseif (!empty($options['facebook_name']))
+			$content.='<iframe src="//www.facebook.com/plugins/likebox.php?href=http%3A%2F%2Fwww.facebook.com%2F'.$options['facebook_name'].'&amp;width=550&amp;height=590&amp;colorscheme=light&amp;show_faces=true&amp;border_color&amp;stream=true&amp;header=true&amp;appId=134738089947317" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:550px; height:590px;" allowTransparency="true"></iframe>';			
 			else $content.="<p>This page is where you'll find our Facebook profile and updates. Please check back soon!</p>";
 			break;
 
@@ -779,9 +952,7 @@ function audiology_socials($content){
 				$client->setDeveloperKey('AIzaSyA7F_j8yWBlggS9UmWM1JO0BIPE2IygXNk');
 				$plus = new apiPlusService($client);
 
-  				$id = '103993525308563772903';
-  				$id = '114834319245262847429';
-
+  				$id = $options['googleplus'];
 			    $me = $plus->people->get($id);
 			  	$optParams = array('maxResults' => 100);
 			    $activities = $plus->activities->listActivities($id, 'public', $optParams);

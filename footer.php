@@ -9,12 +9,13 @@
  * @subpackage Boilerplate
  * @since Boilerplate 1.0
  */
-$options = get_option('plugin_options'); 
+
+$options = get_option('audiology_options'); 
 ?>
+		</div>
 		</section><!-- #main -->
 		<?= $GLOBALS['adPanel'] ?>
 		<div id="footer-wrapper"></div>
-
 			<?php if($options['socialLaunch'] == 1) : ?>
 			<footer role="contentinfo" class="twitterBar">
 				<?php get_sidebar( 'footer' ); ?>
@@ -24,76 +25,45 @@ $options = get_option('plugin_options');
 				</div>
 				<div id="siteMap">
 					<?php wp_nav_menu( array( 'container' => false, 'theme_location' => 'footer' ) ); ?>
-					
+
  					<div id="socialLaunch" class="twittHead"> 
 						<h4 class="twittHead">Social Media</h4>
-						<a  a target="_blank" href="http://twitter.com/<?= str_replace('@', '', $options['twitter']) ?>" id="twitterBtn">Twitter</a>
-						<a  a target="_blank" href="http://www.facebook.com/pages/<?= $options['facebook_name'] ?>/<?= $options['facebook_id'] ?>" id="faceBookBtn">Facebook</a>
-						<a href="https://plus.google.com/u/0/b/<?= $options['googleplus'] ?>/<?= $options['googleplus'] ?>/" id="googleBtn">Google +</a>
+						<a  target="_blank" href="http://twitter.com/<?= str_replace('@', '', $options['twitter']) ?>" id="twitterBtn">Twitter</a>
+						<?
+							if($options['facebook_id'] != "") $fblink = "http://www.facebook.com/pages/".$options['facebook_name']."/".$options['facebook_id'];
+							else $fblink = "http://www.facebook.com/".$options['facebook_name'];
+						?>
+						<a  target="_blank" href="<?= $fblink ?>" id="faceBookBtn">Facebook</a>
+						<a href="https://plus.google.com/u/0/b/<?= $options['googleplus'] ?>/<?= $options['googleplus'] ?>/about" id="googleBtn">Google +</a>
 					</div>
 				</div>
 				<?php else: ?>
 			<footer role="contentinfo" class="twitterPanel">
 					<?php get_sidebar( 'footer' ); ?>
-				<div id="socialLaunch" class="twittHead"> 
-					<a  a target="_blank" href="http://twitter.com/<?= str_replace('@', '', $options['twitter']) ?>" id="twitterBtn">Twitter</a>
-					<a  a target="_blank" href="http://www.facebook.com/pages/<?= $options['facebook_name'] ?>/<?= $options['facebook_id'] ?>" id="faceBookBtn">Facebook</a>
-					<a href="https://plus.google.com/u/0/b/<?= $options['googleplus'] ?>/<?= $options['googleplus'] ?>/" id="googleBtn">Google +</a>
+				<div id="socialLaunch" class="twittHead<? echo $options['yelp'] != "" ? " yelp" : ""; ?>"> 
+					<? if ($options['yelp'] != "") { ?>
+						<a target="_blank" href="http://www.yelp.com/biz/<?= $options['yelp'] ?>" id="yelpBtn">Yelp</a>	
+					<? } ?>
+					<a target="_blank" href="http://twitter.com/<?= str_replace('@', '', $options['twitter']) ?>" id="twitterBtn">Twitter</a>
+					<?
+						if($options['facebook_id'] != "") $fblink = "http://www.facebook.com/pages/".$options['facebook_name']."/".$options['facebook_id'];
+						else $fblink = "http://www.facebook.com/".$options['facebook_name'];
+					?>
+					<a target="_blank" href="<?= $fblink; ?>" id="faceBookBtn">Facebook</a>
+					<a target="_blank" href="https://plus.google.com/u/0/b/<?= $options['googleplus'] ?>/<?= $options['googleplus'] ?>/about" id="googleBtn" target="_blank">Google +</a>
 				</div>
 				<div id="siteMap">
 					<?php wp_nav_menu( array( 'container' => false, 'theme_location' => 'footer' ) ); ?>
 					<div id="twitterBar">
-						<h4 class="twittAddress"><? $options = get_option('plugin_options'); echo $options['twitter']; ?></h4>
+						<h4 class="twittAddress"><a target="_blank" href="http://twitter.com/<?= str_replace('@', '', $options['twitter']) ?>"><?= $options['twitter']; ?></a></h4>
 						<ul class="twitterFeed"></ul>
 					</div>
 				</div>
 				<?php endif; ?>
-				<div id="copyright">Copyright &copy; 2012, Fuel Medical Group. All rights reserved.</div>
+				<div id="copyright">Copyright &copy; <?= date('Y'); ?>, Fuel Medical Group. All rights reserved.</div>
 		</footer><!-- footer -->
 		<?php wp_footer(); ?>
-		<div id="scheduleVisit" class="modal">
-			<form id="scheduleVisitForm" method="post" action="">
-				<input type="hidden" name="scheduleVisit" value="1"/>
-				<div class="formItem"><label>Name:</label><input type="text" name="Name" class="required" /></div>
-				<div class="formItem"><label>Email:</label><input type="text" name="Email" class="required email" /></div>
-				<div class="formItem"><label>Phone:</label><input type="text" name="Phone" class="required phoneUS" /></div>
-				<div class="formItem">
-					<label>Preferred Time of Day:</label>
-					<select name="Time">
-						<option>Morning</option>
-						<option>Afternoon</option>
-					</select>
-				</div>
-				<div class="formItem">
-					<label>Preferred Day of Week:</label>
-					<select name="Day">
-						<option>Monday</option>
-						<option>Tuesday</option>
-						<option>Wednesday</option>
-						<option>Thursday</option>
-						<option>Friday</option>
-					</select>
-				</div>
-				<div class="formItem">
-				    <label>Preferred Callback Time:</label>
-				    <select name="callbackTime">
-				        <option>Morning</option>
-				        <option>Afternoon</option>
-				    </select>
-				</div>
-				<div class="formItem submit"><input type="submit" name="submit" value="Schedule Visit" /></div>
-			</form>
-		</div>
-		<div id="emailSuccess" class="modal">
-  			<img alt="<?php bloginfo('name'); ?> Logo" src="<?php bloginfo('stylesheet_directory'); ?>/<?= $options['emailSuccessImage']; ?>" /><br />
-  			<p>Your inquiry has been sent. Please expect to hear from our office within two business days.</p>
-		</div>
-		<div id="youTube" class="modal">
-			<iframe id="ytFrame" width="458" height="255" src="http://www.youtube.com/embed/videoseries?list=PLEF1CA89616F11482&hl=en_US&rel=0" frameborder="0" allowfullscreen></iframe>	
-		</div>
-		<div id="locations" class="modal">
-			<?php echo $options['clinicLocations']; ?>
-		</div>
+		<?= eval('?>'.$options['footerForms']); ?>
 		<script type="text/javascript">
 		jQuery(function() {
 			jQuery.getJSON('https://api.twitter.com/1/statuses/user_timeline.json?screen_name=<?php echo str_replace('@', '', $options['twitter']); ?>&exclude_replies=true&count=3&callback=?',
@@ -106,8 +76,12 @@ $options = get_option('plugin_options');
 						jQuery('.twitterFeed').append('<li class="tweet"><div class="tweetBody">'+tweetText+'</div></li>');
 					});
 					setInterval(function() {
+						<? if($options['socialLaunch']) { ?>
 						jQuery('.twitterFeed li').filter(':last').hide().remove().prependTo(jQuery('.twitterFeed'));
 						jQuery('.twitterFeed li:eq(0)').slideDown();									
+						<? } else { ?>
+						jQuery('.twitterFeed li').filter(':last').remove().prependTo(jQuery('.twitterFeed'));
+						<? } ?>
 					}, 5000);
 			    }
 			);

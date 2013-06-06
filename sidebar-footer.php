@@ -46,3 +46,9 @@
 						<?php dynamic_sidebar( 'fourth-footer-widget-area' ); ?>
 					</ul>
 <?php endif; ?>
+
+<?php if ( is_active_sidebar( 'fifth-footer-widget-area' ) ) : ?>
+					<ul class="xoxo">
+						<?php dynamic_sidebar( 'fifth-footer-widget-area' ); ?>
+					</ul>
+<?php endif; ?>

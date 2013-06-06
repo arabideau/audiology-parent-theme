@@ -1,0 +1,11 @@
+/* IE (all versions) */
+/* Boilerplate makes it easy to target different versions of IE, such as:
+html.ie6 { text-align: center; }
+html.ie6 body { text-align: left; }
+
+#pageWrapper, header #logo, header #headerLinks, ul#menu-community > li, #searchsubmit, body.home.page #content, footer li.widget-container a {
+    behavior: url(wp-content/themes/ent/iepngfix.htc);
+}
+body { behavior: url(wp-content/themes/ent/csshover3.htc);
+}
+*/

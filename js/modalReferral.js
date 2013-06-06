@@ -1,0 +1,1 @@
+jQuery(function() { jQuery("#referralSuccess").modal({ containerCss:{height:350, width:450} }); })

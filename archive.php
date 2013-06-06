@@ -34,6 +34,7 @@ get_header(); ?>
 							_e( 'Blog Archives', 'boilerplate' );
 						endif;
 					?></h1>
+					<?php get_sidebar(); ?>
 <?php
 	/* Since we called the_post() above, we need to
 	 * rewind the loop back to the beginning that way
@@ -46,5 +47,4 @@ get_header(); ?>
 	 */
 	 get_template_part( 'loop', 'archive' );
 ?>
-<?php get_sidebar(); ?>
 <?php get_footer(); ?>

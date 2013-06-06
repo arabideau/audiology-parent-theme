@@ -17,7 +17,7 @@ get_header(); ?>
 
 	<ul class="slideshow">
 		<? $showcases = get_showcase(); foreach ($showcases as $adscene) { ?>
-		<li><a href="<?= $adscene['link'] ?>"><img src="<? bloginfo('stylesheet_directory') ?>/images/showcase/<?= $adscene['image'] ?>" /></a></li>
+		<li><a alt="<?= $adscene['alt'] ?>" href="<? echo bloginfo('url').$adscene['link'] ?>"><img src="<? bloginfo('stylesheet_directory') ?>/images/showcase/<?= $adscene['image'] ?>" /></a></li>
 		<? } ?>
 	</ul>
 

@@ -7,14 +7,20 @@
 /*	Define Boilerplate URI */
 	define('BP_THEME_URL', get_template_directory_uri());
 
-/*
-	There are essentially 5 sections to this:
-	1)	Add "Boilerplate Admin" link to left-nav Admin Menu & callback function for clicking that menu link
-	2)	Add Admin Page CSS if on the Admin Page
-	3)	Add "Boilerplate Admin" Page options
-	4)	Create functions to add above elements to pages
-	5)	Add Boilerplate options to page as requested
-*/
+	if ( ! function_exists( 'admin_register_head' ) ):
+		function admin_register_head() {
+			echo '<link rel="stylesheet" href="' .BP_THEME_URL. '/boilerplate-admin/admin-style.css">'.PHP_EOL;
+		}
+		add_action('admin_head', 'admin_register_head');
+	endif; // admin_register_head
+
+	/*
+		There are essentially 5 sections to this:
+		1)	Add "Boilerplate Admin" link to left-nav Admin Menu & callback function for clicking that menu link
+		2)	Add "Boilerplate Admin" Page options
+		3)	Create functions to add above elements to pages
+		4)	Add Boilerplate options to page as requested
+	*/
 
 /*	1)	Add "Boilerplate Admin" link to left-nav Admin Menu & callback function for clicking that menu link */
 
@@ -25,16 +31,8 @@
 		}
 		add_action('admin_menu', 'create_boilerplate_admin_page');
 	endif; // create_boilerplate_admin_page
-
-		//	Add option if in Admin Page
-	if ( ! function_exists( 'create_audiology_admin_page' ) ):
-		function create_audiology_admin_page() {
-			add_theme_page('Audiology Admin', 'Audiology Admin', 'administrator', 'audiology-admin', 'build_audiology_admin_page');
-		}
-		add_action('admin_menu', 'create_audiology_admin_page');
-	endif; // create_boilerplate_admin_page
-
-
+	
+	
 	//	You get this if you click the left-column "Boilerplate Admin" (added above)
 	if ( ! function_exists( 'build_boilerplate_admin_page' ) ):
 		function build_boilerplate_admin_page() {
@@ -54,40 +52,14 @@
 		<?php
 		}
 	endif; // build_boilerplate_admin_page
-
-
-	//	You get this if you click the left-column "Boilerplate Admin" (added above)
-	if ( ! function_exists( 'build_audiology_admin_page' ) ):
-		function build_audiology_admin_page() {
-		?>
-			<div id="boilerplate-options-wrap">
-				<div class="icon32" id="icon-tools"><br /></div>
-				<h2>Audiology Admin</h2>
-				<form method="post" action="options.php" enctype="multipart/form-data">
-					<?php settings_fields('plugin_options'); /* very last function on this page... */ ?>
-					<?php do_settings_sections('audiology-admin'); /* let's get started! */?>
-					<p class="submit"><input name="Submit" type="submit" class="button-primary" value="<?php esc_attr_e('Save Changes'); ?>"></p>
-				</form>
-			</div>
-		<?php
-		}
-	endif; // build_boilerplate_admin_page
-
-
-/*	2)	Add Admin Page CSS if on the Admin Page */
-	if ( ! function_exists( 'admin_register_head' ) ):
-		function admin_register_head() {
-			echo '<link rel="stylesheet" href="' .BP_THEME_URL. '/boilerplate-admin/admin-style.css">'.PHP_EOL;
-		}
-		add_action('admin_head', 'admin_register_head');
-	endif; // admin_register_head
+	
 
 /*	3)	Add "Boilerplate Admin" Page options */
 	//	Register form elements
-	if ( ! function_exists( 'register_and_build_fields' ) ):
-		function register_and_build_fields() {
+	if ( ! function_exists( 'register_and_build_boilerplate_fields' ) ):
+		function register_and_build_boilerplate_fields() {
 			register_setting('plugin_options', 'plugin_options', 'validate_setting');
-			add_settings_section('main_section', '', 'section_cb', 'boilerplate-admin');
+			add_settings_section('main_section', '', 'boilerplate_section_cb', 'boilerplate-admin');
 			add_settings_field('toolbar', 'IE6 Image Toolbar?:', 'toolbar_setting', 'boilerplate-admin', 'main_section');
 			add_settings_field('google_chrome', 'IE-edge / Google Chrome?:', 'google_chrome_setting', 'boilerplate-admin', 'main_section');
 			add_settings_field('google_verification', 'Google Verification?:', 'google_verification_setting', 'boilerplate-admin', 'main_section');
@@ -101,20 +73,10 @@
 			add_settings_field('plugins_js', 'jQuery Plug-ins JS?:', 'plugins_js_setting', 'boilerplate-admin', 'main_section');
 			add_settings_field('site_js', 'Site-specific JS?:', 'site_js_setting', 'boilerplate-admin', 'main_section');
 			add_settings_field('cache_buster', 'Cache-Buster?:', 'cache_buster_setting', 'boilerplate-admin', 'main_section');
-			add_settings_section('main_section', '', 'section_cb', 'audiology-admin');
-			add_settings_field('twitter', 'Twitter Handle:', 'twitter_setting', 'audiology-admin', 'main_section');
-			add_settings_field('facebook', 'Facebook Info:', 'facebook_setting', 'audiology-admin', 'main_section');
-			add_settings_field('googleplus', 'Google+ Info:', 'googleplus_setting', 'audiology-admin', 'main_section');
-			add_settings_field('scheduleVisit_email', 'Email Address:', 'email_setting', 'audiology-admin', 'main_section');
-			add_settings_field('scheduleVisit_fromEmail', 'From Email Address:', 'from_email_setting', 'audiology-admin', 'main_section');
-			add_settings_field('emailSuccessImage', 'Email success image:', 'email_success_image', 'audiology-admin', 'main_section');
-			add_settings_field('pageWrapper', 'Include Page Wrapper:', 'page_wrapper', 'audiology-admin', 'main_section');
-			add_settings_field('socialLaunch', 'Use Social Launch style footer?:', 'social_launch', 'audiology-admin', 'main_section');
-			add_settings_field('clinicLocations', 'Enter HTML for contact popup:', 'clinic_locations', 'audiology-admin', 'main_section');
 		}
-		add_action('admin_init', 'register_and_build_fields');
+		add_action('admin_init', 'register_and_build_boilerplate_fields');
 	endif; // register_and_build_fields
-
+	
 	//	Add Admin Page validation
 	if ( ! function_exists( 'validate_setting' ) ):
 		function validate_setting($plugin_options) {
@@ -146,208 +108,301 @@
 		}
 	endif; // validate_setting
 
-	//	Add Admin Page options
 
 	//	in case you need it...
-	if ( ! function_exists( 'section_cb' ) ):
-		function section_cb() {}
-	endif; // section_cb
+	if ( ! function_exists( 'boilerplate_section_cb' ) ):
+		function boilerplate_section_cb() {
+			//	callback fn for toolbar
+			if ( ! function_exists( 'toolbar_setting' ) ):
+				function toolbar_setting() {
+					$options = get_option('plugin_options');
+					$checked = (isset($options['toolbar']) && $options['toolbar']) ? 'checked="checked" ' : '';
+					echo '<input class="check-field" type="checkbox" name="plugin_options[toolbar]" value="true" ' .$checked. '/>';
+					echo '<p>Kill the IE6 Image Toolbar that appears when users hover over images on your site.</p>';
+					echo '<p>Selecting this option will add the following code to the <code>&lt;head&gt;</code> of your pages:</p>';
+					echo '<code>&lt;meta http-equiv="imagetoolbar" content="false"&gt;</code>';
+				}
+			endif; // toolbar_setting
 
-	//	callback fn for toolbar
-	if ( ! function_exists( 'toolbar_setting' ) ):
-		function toolbar_setting() {
-			$options = get_option('plugin_options');
-			$checked = (isset($options['toolbar']) && $options['toolbar']) ? 'checked="checked" ' : '';
-			echo '<input class="check-field" type="checkbox" name="plugin_options[toolbar]" value="true" ' .$checked. '/>';
-			echo '<p>Kill the IE6 Image Toolbar that appears when users hover over images on your site.</p>';
-			echo '<p>Selecting this option will add the following code to the <code>&lt;head&gt;</code> of your pages:</p>';
-			echo '<code>&lt;meta http-equiv="imagetoolbar" content="false"&gt;</code>';
+			//	callback fn for google_chrome
+			if ( ! function_exists( 'google_chrome_setting' ) ):
+				function google_chrome_setting() {
+					$options = get_option('plugin_options');
+					$checked = (isset($options['google_chrome']) && $options['google_chrome']) ? 'checked="checked" ' : '';
+					echo '<input class="check-field" type="checkbox" name="plugin_options[google_chrome]" value="true" ' .$checked. '/>';
+					echo '<p>Force the most-recent IE rendering engine or users with <a href="http://www.chromium.org/developers/how-tos/chrome-frame-getting-started">Google Chrome Frame</a> installed to see your site using Google Frame.</p>';
+					echo '<p>Selecting this option will add the following code to the <code>&lt;head&gt;</code> of your pages:</p>';
+					echo '<code>&lt;meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"&gt;</code>';
+				}
+			endif; // google_chrome_setting
+
+			//	callback fn for google_verification
+			if ( ! function_exists( 'google_verification_setting' ) ):
+				function google_verification_setting() {
+					$options = get_option('plugin_options');
+					$checked = (isset($options['google_verification']) && $options['google_verification'] && $options['google_verification_account'] && $options['google_verification_account'] !== 'XXXXXXXXX...') ? 'checked="checked" ' : '';
+					$account = (isset($options['google_verification_account']) && $options['google_verification_account']) ? $options['google_verification_account'] : 'XXXXXXXXX...';
+					$msg = ($account === 'XXXXXXXXX...') ? ', where </code>XXXXXXXXX...</code> will be replaced with the code you insert above' : '';
+					echo '<input class="check-field" type="checkbox" name="plugin_options[google_verification]" value="true" ' .$checked. '/>';
+					echo '<p>Add <a href="http://www.google.com/support/webmasters/bin/answer.py?answer=35179">Google Verificaton</a> code to the <code>&lt;head&gt;</code> of all your pages.</p>';
+					echo '<p>To include Google Verificaton, select this option and include your Verificaton number here:<br />';
+					echo '<input type="text" size="40" name="plugin_options[google_verification_account]" value="'.$account.'" onfocus="javascript:if(this.value===\'XXXXXXXXX...\'){this.select();}"></p>';
+					echo '<p>Selecting this option will add the following code to the <code>&lt;head&gt;</code> of your pages'.$msg.'</p>';
+					echo '<code>&lt;meta name="google-site-verification" content="'.$account.'"&gt;</code>';
+				}
+			endif; // google_verification_setting
+
+			//	callback fn for viewport
+			if ( ! function_exists( 'viewport_setting' ) ):
+				function viewport_setting() {
+					$options = get_option('plugin_options');
+					$checked = (isset($options['viewport']) && $options['viewport']) ? 'checked="checked" ' : '';
+					echo '<input class="check-field" type="checkbox" name="plugin_options[viewport]" value="true" ' .$checked. '/>';
+					echo '<p>Force <em><abbr title="iPhone, iTouch, iPad...">iThings</abbr></em> to <a href="http://developer.apple.com/library/safari/#documentation/AppleApplications/Reference/SafariWebContent/UsingtheViewport/UsingtheViewport.html#//apple_ref/doc/uid/TP40006509-SW19">show site at full-zoom</a>, instead of trying to show the entire page.</p>';
+					echo '<p>Selecting this option will add the following code to the <code>&lt;head&gt;</code> of your pages:</p>';
+					echo '<code>&lt;meta name="viewport" content="width=device-width"&gt;</code>';
+				}
+			endif; // viewport_setting
+
+			//	callback fn for favicon
+			if ( ! function_exists( 'favicon_setting' ) ):
+				function favicon_setting() {
+					$options = get_option('plugin_options');
+					$checked = (isset($options['favicon']) && $options['favicon']) ? 'checked="checked" ' : '';
+					echo '<input class="check-field" type="checkbox" name="plugin_options[favicon]" value="true" ' .$checked. '/>';
+					echo '<p>If you plan to use a <a href="http://en.wikipedia.org/wiki/Favicon">favicon</a> for your site, place the "favicon.ico" file in the root directory of your site.</p>';
+					echo '<p>If the file is in the right location, you don\'t really need to select this option, browsers will automatically look there and no additional code will be added to your pages.</p>';
+					echo '<p>Selecting this option will add the following code to the <code>&lt;head&gt;</code> of your pages:</p>';
+					echo '<code>&lt;link rel="shortcut icon" href="/favicon.ico"&gt;</code>';
+				}
+			endif; // favicon_setting
+
+			//	callback fn for favicon_ithing
+			if ( ! function_exists( 'favicon_ithing_setting' ) ):
+				function favicon_ithing_setting() {
+					$options = get_option('plugin_options');
+					$checked = (isset($options['favicon_ithing']) && $options['favicon_ithing']) ? 'checked="checked" ' : '';
+					echo '<input class="check-field" type="checkbox" name="plugin_options[favicon_ithing]" value="true" ' .$checked. '/>';
+					echo '<p>To allow <em><abbr title="iPhone, iTouch, iPad...">iThing</abbr></em> users to <a href="http://developer.apple.com/library/safari/#documentation/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html">add an icon for your site to their Home screen</a>, place the "apple-touch-icon.png" file in the root directory of your site.</p>';
+					echo '<p>If the file is in the right location, you don\'t really need to select this option, browsers will automatically look there and no additional code will be added to your pages.</p>';
+					echo '<p>Selecting this option will add the following code to the <code>&lt;head&gt;</code> of your pages:</p>';
+					echo '<code>&lt;link rel="apple-touch-icon" href="/apple-touch-icon.png"&gt;</code>';
+					echo '<code>&lt;link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png"&gt;</code>';
+					echo '<code>&lt;link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72x72.png"&gt;</code>';
+					echo '<code>&lt;link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114.png"&gt;</code>';
+				}
+			endif; // favicon_ithing_setting
+
+			//	callback fn for ie_css
+			if ( ! function_exists( 'ie_css_setting' ) ):
+				function ie_css_setting() {
+					$options = get_option('plugin_options');
+					$checked = (isset($options['ie_css']) && $options['ie_css']) ? 'checked="checked" ' : '';
+					echo '<input class="check-field" type="checkbox" name="plugin_options[ie_css]" value="true" ' .$checked. '/>';
+					echo '<p>If you would like to add a IE-specific CSS file, Boilerplate provides a starter file located in:</p>';
+					echo '<code>' .BP_THEME_URL. '/css/ie-starter.css</code>';
+					echo '<p><strong>I recommend adding any custom IE-specific CSS to this file and either copying from the starter file or using an <code>@import</code> to add the starter file rather than editing the starter file itself.  This will help to avoid your changes being overwritten during upgrades.</strong></p>';
+					echo '<p><strong>And remember</strong>, you don\'t need IE-specific hacks if you activate the IE-Conditional <code>&lt;html&gt;</code> above, because you can target IE specifically by using the IE classes that are being added to <code>&lt;html&gt;</code>.  Sweet!</p>';
+					echo '<p>Selecting this option will add the following code to the <code>&lt;head&gt;</code> of your pages:</p>';
+					echo '<code>&lt;!--[if IE ]&gt;&lt;link rel="stylesheet" href="' .BP_THEME_URL. '/css/ie.css"&gt;&lt;![endif]--&gt;</code>';
+				}
+			endif; // ie_css_setting
+
+			//	callback fn for modernizr_js
+			if ( ! function_exists( 'modernizr_js_setting' ) ):
+				function modernizr_js_setting() {
+					$options = get_option('plugin_options');
+					$checked = (isset($options['modernizr_js']) && $options['modernizr_js']) ? 'checked="checked" ' : '';
+					echo '<input class="check-field" type="checkbox" name="plugin_options[modernizr_js]" value="true" ' .$checked. '/>';
+					echo '<p><a href="http://modernizr.com/">Modernizr</a> is a JS library that appends classes to the <code>&lt;html&gt;</code> that indicate whether the user\'s browser is capable of handling advanced CSS, like "cssreflections" or "no-cssreflections".  It\'s a really handy way to apply varying CSS techniques, depending on the user\'s browser\'s abilities, without resorting to CSS hacks.</p>';
+					echo '<p>Selecting this option will add the following code to the <code>&lt;head&gt;</code> of your pages (note the lack of a version, when you\'re ready to upgrade, simply copy/paste the new version into the file below, and your site is ready to go!):</p>';
+					echo '<code>&lt;script src="' .BP_THEME_URL. '/js/modernizr.js"&gt;&lt;/script&gt;</code>';
+					echo '<p><strong>Note: If you do <em>not</em> include Modernizr, the IEShiv JS <em>will</em> be added to accommodate the HTML5 elements used in Boilerplate in weaker browsers:</strong></p>';
+					echo '<code>&lt;!--[if lt IE 9]&gt;</code>';
+					echo '<code>	&lt;script src="//html5shiv.googlecode.com/svn/trunk/html5.js" onload="window.ieshiv=true;"&gt;&lt;/script&gt;</code>';
+					echo '<code>	&lt;script&gt;!window.ieshiv && document.write(unescape(\'%3Cscript src="' .BP_THEME_URL. '/js/ieshiv.js"%3E%3C/script%3E\'))&lt;/script&gt;</code>';
+					echo '<code>&lt;![endif]--&gt;</code>';
+				}
+			endif; // modernizr_js_setting
+
+			//	callback fn for respond_js
+			if ( ! function_exists( 'respond_js_setting' ) ):
+				function respond_js_setting() {
+					$options = get_option('plugin_options');
+					$checked = (isset($options['respond_js']) && $options['respond_js']) ? 'checked="checked" ' : '';
+					echo '<input class="check-field" type="checkbox" name="plugin_options[respond_js]" value="true" ' .$checked. '/>';
+					echo '<p><a href="http://filamentgroup.com/lab/respondjs_fast_css3_media_queries_for_internet_explorer_6_8_and_more/">Respond.js</a> is a JS library that helps IE<=8 understand <code>@media</code> queries, specifically <code>min-width</code> and <code>max-width</code>, allowing you to more reliably implement <a href="http://www.alistapart.com/articles/responsive-web-design/">responsive design</a> across all browsers.</p>';
+					echo '<p>Selecting this option will add the following code to the <code>&lt;head&gt;</code> of your pages (note the lack of a version, when you\'re ready to upgrade, simply copy/paste the new version into the file below, and your site is ready to go!):</p>';
+					echo '<code>&lt;script src="' .BP_THEME_URL. '/js/respond.js"&gt;&lt;/script&gt;</code>';
+				}
+			endif; // respond_js_setting
+
+			//	callback fn for jquery_js
+			if ( ! function_exists( 'jquery_js_setting' ) ):
+				function jquery_js_setting() {
+					$options = get_option('plugin_options');
+					$checked = (isset($options['jquery_js']) && $options['jquery_js']) ? 'checked="checked" ' : '';
+					$version = (isset($options['jquery_version']) && $options['jquery_version'] && $options['jquery_version'] !== '') ? $options['jquery_version'] : '1.7.1';
+					$inhead = (isset($options['jquery_head']) && $options['jquery_head']) ? 'checked="checked" ' : '';
+					echo '<input class="check-field" type="checkbox" name="plugin_options[jquery_js]" value="true" ' .$checked. '/>';
+					echo '<p><a href="http://jquery.com/">jQuery</a> is a JS library that aids greatly in developing high-quality JavaScript quickly and efficiently.</p>';
+					echo '<p>Selecting this option will add the following code to your pages just before the <code>&lt;/body&gt;</code>:</p>';
+					echo '<code>&lt;script src="//ajax.googleapis.com/ajax/libs/jquery/'.$version.'/jquery.min.js">&lt;/script&gt;</code>';
+					echo '<code>&lt;script&gt;!window.jQuery && document.write(unescape(\'%3Cscript src="'.BP_THEME_URL.'/js/jquery.js"%3E%3C/script%3E\'))&lt;/script&gt;</code>';
+					echo '<p><input class="check-field" type="checkbox" name="plugin_options[jquery_head]" value="true" ' .$inhead. '/>';
+					echo '<strong>Note: <a href="http://developer.yahoo.com/blogs/ydn/posts/2007/07/high_performanc_5/">Best-practices</a> recommend that you load JS as close to the <code>&lt;/body&gt;</code> as possible.  If for some reason you would prefer jQuery and jQuery plug-ins to be in the <code>&lt;head&gt;</code>, please select this option.</strong></p>';
+					echo '<p>The above code first tries to download jQuery from Google\'s CDN (which might be available via the user\'s browser cache).  If this is not successful, it uses the theme\'s version.</p>';
+					echo '<p><strong>Note: This plug-in tries to keep current with the most recent version of jQuery.  If for some reason you would prefer to use another version, please indicate that version:</strong><br />';
+					echo '<input type="text" size="6" name="plugin_options[jquery_version]" value="'.$version.'"> (<a href="http://code.google.com/apis/libraries/devguide.html#jquery">see all versions available via Google\'s CDN</a>)</p>';
+				}
+			endif; // jquery_js_setting
+
+			//	callback fn for plugins_js
+			if ( ! function_exists( 'plugins_js_setting' ) ):
+				function plugins_js_setting() {
+					$options = get_option('plugin_options');
+					$checked = (isset($options['plugins_js']) && $options['plugins_js']) ? 'checked="checked" ' : '';
+					echo '<input class="check-field" type="checkbox" name="plugin_options[plugins_js]" value="true" ' .$checked. '/>';
+					echo '<p>If you choose to use any <a href="http://plugins.jquery.com/">jQuery plug-ins</a>, I recommend downloading and concatenating them together in a single JS file, as below.  This will <a href="http://developer.yahoo.com/performance/rules.html">reduce your site\'s HTTP Requests</a>, making your site a better experience.</p>';
+					echo '<p>Selecting this option will add the following code to your pages just before the <code>&lt;/body&gt;</code>:</p>';
+					echo '<code>&lt;script type=\'text/javascript\' src=\'' .BP_THEME_URL. '/js/plug-in.js?ver=x\'&gt;&lt;/script&gt;</code>';
+					echo '<p>(The single quotes and no-longer-necessary attributes are from WP, would like to fix that... maybe next update...)</p>';
+					echo '<p><strong>Note: If you do <em>not</em> include jQuery, this file will <em>not</em> be added to the page.</strong></p>';
+				}
+			endif; // plugins_js_setting
+
+			//	callback fn for site_js
+			if ( ! function_exists( 'site_js_setting' ) ):
+				function site_js_setting() {
+					$options = get_option('plugin_options');
+					$checked = (isset($options['site_js']) && $options['site_js']) ? 'checked="checked" ' : '';
+					echo '<input class="check-field" type="checkbox" name="plugin_options[site_js]" value="true" ' .$checked. '/>';
+					echo '<p>If you would like to add your own site JavaScript file, Boilerplate provides a starter file located in:</p>';
+					echo '<code>' .BP_THEME_URL. '/js/script-starter.js</code>';
+					echo '<p>Add what you want to that file and select this option.</p>';
+					echo '<p>Selecting this option will add the following code to your pages just before the <code>&lt;/body&gt;</code>:</p>';
+					echo '<code>&lt;script type=\'text/javascript\' src=\'' .BP_THEME_URL. '/js/script-starter.js?ver=x\'&gt;&lt;/script&gt;</code>';
+					echo '<p>(The single quotes and no-longer-necessary attributes are from WP, would like to fix that... maybe next update...)</p>';
+				}
+			endif; // site_js_setting
+
+			//	callback fn for cache_buster
+			if ( ! function_exists( 'cache_buster_setting' ) ):
+				function cache_buster_setting() {
+					$options = get_option('plugin_options');
+					$checked = (isset($options['cache_buster']) && $options['cache_buster']) ? 'checked="checked" ' : '';
+					$version = (isset($options['cache_buster_version']) && $options['cache_buster_version']) ? $options['cache_buster_version'] : '1';
+					echo '<input class="check-field" type="checkbox" name="plugin_options[cache_buster]" value="true" ' .$checked. '/>';
+					echo '<p>To force browsers to fetch a new version of a file, versus one it might already have cached, you can add a "cache buster" to the end of your CSS and JS files.  ';
+					echo 'To increment the cache buster version number, type something here:<br />';
+					echo '<input type="text" size="4" name="plugin_options[cache_buster_version]" value="'.$version.'"></p>';
+					echo '<p>Selecting this option will add the following code to the end of all of your CSS and JS file names on all of your pages:</p>';
+					echo '<code>?ver='.$version.'</code>';
+				}
+			endif; // cache_buster_setting
 		}
-	endif; // toolbar_setting
+	endif; // boilerplate_section_cb
 
-	//	callback fn for google_chrome
-	if ( ! function_exists( 'google_chrome_setting' ) ):
-		function google_chrome_setting() {
-			$options = get_option('plugin_options');
-			$checked = (isset($options['google_chrome']) && $options['google_chrome']) ? 'checked="checked" ' : '';
-			echo '<input class="check-field" type="checkbox" name="plugin_options[google_chrome]" value="true" ' .$checked. '/>';
-			echo '<p>Force the most-recent IE rendering engine or users with <a href="http://www.chromium.org/developers/how-tos/chrome-frame-getting-started">Google Chrome Frame</a> installed to see your site using Google Frame.</p>';
-			echo '<p>Selecting this option will add the following code to the <code>&lt;head&gt;</code> of your pages:</p>';
-			echo '<code>&lt;meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"&gt;</code>';
+//--------------------------------------------------------------------------------------
+
+
+		//	Add option if in Admin Page
+	if ( ! function_exists( 'create_audiology_admin_page' ) ):
+		function create_audiology_admin_page() {
+			add_theme_page('Audiology Admin', 'Audiology Admin', 'administrator', 'audiology-admin', 'build_audiology_admin_page');
 		}
-	endif; // google_chrome_setting
+		add_action('admin_menu', 'create_audiology_admin_page');
+	endif; // create_boilerplate_admin_page
 
-	//	callback fn for google_verification
-	if ( ! function_exists( 'google_verification_setting' ) ):
-		function google_verification_setting() {
-			$options = get_option('plugin_options');
-			$checked = (isset($options['google_verification']) && $options['google_verification'] && $options['google_verification_account'] && $options['google_verification_account'] !== 'XXXXXXXXX...') ? 'checked="checked" ' : '';
-			$account = (isset($options['google_verification_account']) && $options['google_verification_account']) ? $options['google_verification_account'] : 'XXXXXXXXX...';
-			$msg = ($account === 'XXXXXXXXX...') ? ', where </code>XXXXXXXXX...</code> will be replaced with the code you insert above' : '';
-			echo '<input class="check-field" type="checkbox" name="plugin_options[google_verification]" value="true" ' .$checked. '/>';
-			echo '<p>Add <a href="http://www.google.com/support/webmasters/bin/answer.py?answer=35179">Google Verificaton</a> code to the <code>&lt;head&gt;</code> of all your pages.</p>';
-			echo '<p>To include Google Verificaton, select this option and include your Verificaton number here:<br />';
-			echo '<input type="text" size="40" name="plugin_options[google_verification_account]" value="'.$account.'" onfocus="javascript:if(this.value===\'XXXXXXXXX...\'){this.select();}"></p>';
-			echo '<p>Selecting this option will add the following code to the <code>&lt;head&gt;</code> of your pages'.$msg.'</p>';
-			echo '<code>&lt;meta name="google-site-verification" content="'.$account.'"&gt;</code>';
+
+	//	You get this if you click the left-column "Audiology Admin" (added above)
+	if ( ! function_exists( 'build_audiology_admin_page' ) ):
+		function build_audiology_admin_page() {
+		?>
+			<div id="boilerplate-options-wrap">
+				<div class="icon32" id="icon-tools"><br /></div>
+				<h2>Audiology Admin</h2>
+				<form method="post" action="options.php" enctype="multipart/form-data">
+					<?php settings_fields('audiology_options'); /* very last function on this page... */ ?>
+					<?php do_settings_sections('audiology-admin'); /* let's get started! */?>
+					<p class="submit"><input name="Submit" type="submit" class="button-primary" value="<?php esc_attr_e('Save Changes'); ?>"></p>
+				</form>
+			</div>
+		<?php
 		}
-	endif; // google_verification_setting
+	endif; // build_boilerplate_admin_page
 
-	//	callback fn for viewport
-	if ( ! function_exists( 'viewport_setting' ) ):
-		function viewport_setting() {
-			$options = get_option('plugin_options');
-			$checked = (isset($options['viewport']) && $options['viewport']) ? 'checked="checked" ' : '';
-			echo '<input class="check-field" type="checkbox" name="plugin_options[viewport]" value="true" ' .$checked. '/>';
-			echo '<p>Force <em><abbr title="iPhone, iTouch, iPad...">iThings</abbr></em> to <a href="http://developer.apple.com/library/safari/#documentation/AppleApplications/Reference/SafariWebContent/UsingtheViewport/UsingtheViewport.html#//apple_ref/doc/uid/TP40006509-SW19">show site at full-zoom</a>, instead of trying to show the entire page.</p>';
-			echo '<p>Selecting this option will add the following code to the <code>&lt;head&gt;</code> of your pages:</p>';
-			echo '<code>&lt;meta name="viewport" content="width=device-width"&gt;</code>';
+/*	3)	Add "Audiology Admin" Page options */
+	//	Register form elements
+	if ( ! function_exists( 'register_and_build_audiology_fields' ) ):
+		function register_and_build_audiology_fields() {
+		register_setting('audiology_options', 'audiology_options', 'audiology_validate_setting');	
+		add_settings_section('audiology_main_section', '', 'audiology_section_cb', 'audiology-admin');
+		add_settings_field('twitter', 'Twitter Handle:', 'twitter_setting', 'audiology-admin', 'audiology_main_section');
+		add_settings_field('facebook', 'Facebook Info:', 'facebook_setting', 'audiology-admin', 'audiology_main_section');
+		add_settings_field('googleplus', 'Google+ Info:', 'googleplus_setting', 'audiology-admin', 'audiology_main_section');
+		add_settings_field('scheduleVisit_email', 'Email Address:', 'email_setting', 'audiology-admin', 'audiology_main_section');
+		add_settings_field('scheduleVisit_fromEmail', 'From Email Address:', 'from_email_setting', 'audiology-admin', 'audiology_main_section');
+		add_settings_field('emailSuccessImage', 'Email success image:', 'email_success_image', 'audiology-admin', 'audiology_main_section');
+		add_settings_field('emailSuccessMessage', 'Email success message:', 'email_success_message', 'audiology-admin', 'audiology_main_section');
+		add_settings_field('pageWrapper', 'Include Page Wrapper:', 'page_wrapper', 'audiology-admin', 'audiology_main_section');
+		add_settings_field('socialLaunch', 'Use Social Launch style footer?:', 'social_launch', 'audiology-admin', 'audiology_main_section');
+		add_settings_field('clinicLocations', 'Enter HTML for contact popup:', 'clinic_locations', 'audiology-admin', 'audiology_main_section');
+		add_settings_field('phoneNumbers', 'Enter HTML for Call popup:', 'phone_numbers', 'audiology-admin', 'audiology_main_section');
+		add_settings_field('yelp', 'Enter Yelp link:', 'yelp', 'audiology-admin', 'audiology_main_section');
+		add_settings_field('headerLinks', 'Enter header link content:', 'header_links', 'audiology-admin', 'audiology_main_section');
+		add_settings_field('footerForms', 'Enter footer form content:', 'footer_forms', 'audiology-admin', 'audiology_main_section');
+		add_settings_field('mobileFooter', 'Enter mobile footer content:', 'mobile_footer', 'audiology-admin', 'audiology_main_section');
+		add_settings_field('phoneNumber', 'Phone Number for mobile site:', 'phone_number', 'audiology-admin', 'audiology_main_section');
+	}
+	add_action('admin_init', 'register_and_build_audiology_fields');
+endif; // register_and_build_fields
+
+
+	//	Add Admin Page validation
+	if ( ! function_exists( 'audiology_validate_setting' ) ):
+		function audiology_validate_setting($audiology_options) {
+			$keys = array_keys($_FILES);
+			$i = 0;
+			foreach ( $_FILES as $image ) {
+				// if a files was upload
+				if ($image['size']) {
+					// if it is an image
+					if ( preg_match('/(jpg|jpeg|png|gif)$/', $image['type']) ) {
+						$override = array('test_form' => false);
+						// save the file, and store an array, containing its location in $file
+						$file = wp_handle_upload( $image, $override );
+						$audiology_options[$keys[$i]] = $file['url'];
+					} else {
+						// Not an image.
+						$options = get_option('audiology_options');
+						$audiology_options[$keys[$i]] = $options[$logo];
+						// Die and let the user know that they made a mistake.
+						wp_die('No image was uploaded.');
+					}
+				} else { // else, the user didn't upload a file, retain the image that's already on file.
+					$options = get_option('audiology_options');
+					$audiology_options[$keys[$i]] = $options[$keys[$i]];
+				}
+				$i++;
+			}
+			return $audiology_options;
 		}
-	endif; // viewport_setting
+	endif; // validate_setting
 
-	//	callback fn for favicon
-	if ( ! function_exists( 'favicon_setting' ) ):
-		function favicon_setting() {
-			$options = get_option('plugin_options');
-			$checked = (isset($options['favicon']) && $options['favicon']) ? 'checked="checked" ' : '';
-			echo '<input class="check-field" type="checkbox" name="plugin_options[favicon]" value="true" ' .$checked. '/>';
-			echo '<p>If you plan to use a <a href="http://en.wikipedia.org/wiki/Favicon">favicon</a> for your site, place the "favicon.ico" file in the root directory of your site.</p>';
-			echo '<p>If the file is in the right location, you don\'t really need to select this option, browsers will automatically look there and no additional code will be added to your pages.</p>';
-			echo '<p>Selecting this option will add the following code to the <code>&lt;head&gt;</code> of your pages:</p>';
-			echo '<code>&lt;link rel="shortcut icon" href="/favicon.ico"&gt;</code>';
-		}
-	endif; // favicon_setting
+	//	Add Admin Page options
 
-	//	callback fn for favicon_ithing
-	if ( ! function_exists( 'favicon_ithing_setting' ) ):
-		function favicon_ithing_setting() {
-			$options = get_option('plugin_options');
-			$checked = (isset($options['favicon_ithing']) && $options['favicon_ithing']) ? 'checked="checked" ' : '';
-			echo '<input class="check-field" type="checkbox" name="plugin_options[favicon_ithing]" value="true" ' .$checked. '/>';
-			echo '<p>To allow <em><abbr title="iPhone, iTouch, iPad...">iThing</abbr></em> users to <a href="http://developer.apple.com/library/safari/#documentation/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html">add an icon for your site to their Home screen</a>, place the "apple-touch-icon.png" file in the root directory of your site.</p>';
-			echo '<p>If the file is in the right location, you don\'t really need to select this option, browsers will automatically look there and no additional code will be added to your pages.</p>';
-			echo '<p>Selecting this option will add the following code to the <code>&lt;head&gt;</code> of your pages:</p>';
-			echo '<code>&lt;link rel="apple-touch-icon" href="/apple-touch-icon.png"&gt;</code>';
-			echo '<code>&lt;link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png"&gt;</code>';
-			echo '<code>&lt;link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72x72.png"&gt;</code>';
-			echo '<code>&lt;link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114.png"&gt;</code>';
-		}
-	endif; // favicon_ithing_setting
 
-	//	callback fn for ie_css
-	if ( ! function_exists( 'ie_css_setting' ) ):
-		function ie_css_setting() {
-			$options = get_option('plugin_options');
-			$checked = (isset($options['ie_css']) && $options['ie_css']) ? 'checked="checked" ' : '';
-			echo '<input class="check-field" type="checkbox" name="plugin_options[ie_css]" value="true" ' .$checked. '/>';
-			echo '<p>If you would like to add a IE-specific CSS file, Boilerplate provides a starter file located in:</p>';
-			echo '<code>' .BP_THEME_URL. '/css/ie-starter.css</code>';
-			echo '<p><strong>I recommend adding any custom IE-specific CSS to this file and either copying from the starter file or using an <code>@import</code> to add the starter file rather than editing the starter file itself.  This will help to avoid your changes being overwritten during upgrades.</strong></p>';
-			echo '<p><strong>And remember</strong>, you don\'t need IE-specific hacks if you activate the IE-Conditional <code>&lt;html&gt;</code> above, because you can target IE specifically by using the IE classes that are being added to <code>&lt;html&gt;</code>.  Sweet!</p>';
-			echo '<p>Selecting this option will add the following code to the <code>&lt;head&gt;</code> of your pages:</p>';
-			echo '<code>&lt;!--[if IE ]&gt;&lt;link rel="stylesheet" href="' .BP_THEME_URL. '/css/ie.css"&gt;&lt;![endif]--&gt;</code>';
-		}
-	endif; // ie_css_setting
-
-	//	callback fn for modernizr_js
-	if ( ! function_exists( 'modernizr_js_setting' ) ):
-		function modernizr_js_setting() {
-			$options = get_option('plugin_options');
-			$checked = (isset($options['modernizr_js']) && $options['modernizr_js']) ? 'checked="checked" ' : '';
-			echo '<input class="check-field" type="checkbox" name="plugin_options[modernizr_js]" value="true" ' .$checked. '/>';
-			echo '<p><a href="http://modernizr.com/">Modernizr</a> is a JS library that appends classes to the <code>&lt;html&gt;</code> that indicate whether the user\'s browser is capable of handling advanced CSS, like "cssreflections" or "no-cssreflections".  It\'s a really handy way to apply varying CSS techniques, depending on the user\'s browser\'s abilities, without resorting to CSS hacks.</p>';
-			echo '<p>Selecting this option will add the following code to the <code>&lt;head&gt;</code> of your pages (note the lack of a version, when you\'re ready to upgrade, simply copy/paste the new version into the file below, and your site is ready to go!):</p>';
-			echo '<code>&lt;script src="' .BP_THEME_URL. '/js/modernizr.js"&gt;&lt;/script&gt;</code>';
-			echo '<p><strong>Note: If you do <em>not</em> include Modernizr, the IEShiv JS <em>will</em> be added to accommodate the HTML5 elements used in Boilerplate in weaker browsers:</strong></p>';
-			echo '<code>&lt;!--[if lt IE 9]&gt;</code>';
-			echo '<code>	&lt;script src="//html5shiv.googlecode.com/svn/trunk/html5.js" onload="window.ieshiv=true;"&gt;&lt;/script&gt;</code>';
-			echo '<code>	&lt;script&gt;!window.ieshiv && document.write(unescape(\'%3Cscript src="' .BP_THEME_URL. '/js/ieshiv.js"%3E%3C/script%3E\'))&lt;/script&gt;</code>';
-			echo '<code>&lt;![endif]--&gt;</code>';
-		}
-	endif; // modernizr_js_setting
-
-	//	callback fn for respond_js
-	if ( ! function_exists( 'respond_js_setting' ) ):
-		function respond_js_setting() {
-			$options = get_option('plugin_options');
-			$checked = (isset($options['respond_js']) && $options['respond_js']) ? 'checked="checked" ' : '';
-			echo '<input class="check-field" type="checkbox" name="plugin_options[respond_js]" value="true" ' .$checked. '/>';
-			echo '<p><a href="http://filamentgroup.com/lab/respondjs_fast_css3_media_queries_for_internet_explorer_6_8_and_more/">Respond.js</a> is a JS library that helps IE<=8 understand <code>@media</code> queries, specifically <code>min-width</code> and <code>max-width</code>, allowing you to more reliably implement <a href="http://www.alistapart.com/articles/responsive-web-design/">responsive design</a> across all browsers.</p>';
-			echo '<p>Selecting this option will add the following code to the <code>&lt;head&gt;</code> of your pages (note the lack of a version, when you\'re ready to upgrade, simply copy/paste the new version into the file below, and your site is ready to go!):</p>';
-			echo '<code>&lt;script src="' .BP_THEME_URL. '/js/respond.js"&gt;&lt;/script&gt;</code>';
-		}
-	endif; // respond_js_setting
-
-	//	callback fn for jquery_js
-	if ( ! function_exists( 'jquery_js_setting' ) ):
-		function jquery_js_setting() {
-			$options = get_option('plugin_options');
-			$checked = (isset($options['jquery_js']) && $options['jquery_js']) ? 'checked="checked" ' : '';
-			$version = (isset($options['jquery_version']) && $options['jquery_version'] && $options['jquery_version'] !== '') ? $options['jquery_version'] : '1.7.1';
-			$inhead = (isset($options['jquery_head']) && $options['jquery_head']) ? 'checked="checked" ' : '';
-			echo '<input class="check-field" type="checkbox" name="plugin_options[jquery_js]" value="true" ' .$checked. '/>';
-			echo '<p><a href="http://jquery.com/">jQuery</a> is a JS library that aids greatly in developing high-quality JavaScript quickly and efficiently.</p>';
-			echo '<p>Selecting this option will add the following code to your pages just before the <code>&lt;/body&gt;</code>:</p>';
-			echo '<code>&lt;script src="//ajax.googleapis.com/ajax/libs/jquery/'.$version.'/jquery.min.js">&lt;/script&gt;</code>';
-			echo '<code>&lt;script&gt;!window.jQuery && document.write(unescape(\'%3Cscript src="'.BP_THEME_URL.'/js/jquery.js"%3E%3C/script%3E\'))&lt;/script&gt;</code>';
-			echo '<p><input class="check-field" type="checkbox" name="plugin_options[jquery_head]" value="true" ' .$inhead. '/>';
-			echo '<strong>Note: <a href="http://developer.yahoo.com/blogs/ydn/posts/2007/07/high_performanc_5/">Best-practices</a> recommend that you load JS as close to the <code>&lt;/body&gt;</code> as possible.  If for some reason you would prefer jQuery and jQuery plug-ins to be in the <code>&lt;head&gt;</code>, please select this option.</strong></p>';
-			echo '<p>The above code first tries to download jQuery from Google\'s CDN (which might be available via the user\'s browser cache).  If this is not successful, it uses the theme\'s version.</p>';
-			echo '<p><strong>Note: This plug-in tries to keep current with the most recent version of jQuery.  If for some reason you would prefer to use another version, please indicate that version:</strong><br />';
-			echo '<input type="text" size="6" name="plugin_options[jquery_version]" value="'.$version.'"> (<a href="http://code.google.com/apis/libraries/devguide.html#jquery">see all versions available via Google\'s CDN</a>)</p>';
-		}
-	endif; // jquery_js_setting
-
-	//	callback fn for plugins_js
-	if ( ! function_exists( 'plugins_js_setting' ) ):
-		function plugins_js_setting() {
-			$options = get_option('plugin_options');
-			$checked = (isset($options['plugins_js']) && $options['plugins_js']) ? 'checked="checked" ' : '';
-			echo '<input class="check-field" type="checkbox" name="plugin_options[plugins_js]" value="true" ' .$checked. '/>';
-			echo '<p>If you choose to use any <a href="http://plugins.jquery.com/">jQuery plug-ins</a>, I recommend downloading and concatenating them together in a single JS file, as below.  This will <a href="http://developer.yahoo.com/performance/rules.html">reduce your site\'s HTTP Requests</a>, making your site a better experience.</p>';
-			echo '<p>Selecting this option will add the following code to your pages just before the <code>&lt;/body&gt;</code>:</p>';
-			echo '<code>&lt;script type=\'text/javascript\' src=\'' .BP_THEME_URL. '/js/plug-in.js?ver=x\'&gt;&lt;/script&gt;</code>';
-			echo '<p>(The single quotes and no-longer-necessary attributes are from WP, would like to fix that... maybe next update...)</p>';
-			echo '<p><strong>Note: If you do <em>not</em> include jQuery, this file will <em>not</em> be added to the page.</strong></p>';
-		}
-	endif; // plugins_js_setting
-
-	//	callback fn for site_js
-	if ( ! function_exists( 'site_js_setting' ) ):
-		function site_js_setting() {
-			$options = get_option('plugin_options');
-			$checked = (isset($options['site_js']) && $options['site_js']) ? 'checked="checked" ' : '';
-			echo '<input class="check-field" type="checkbox" name="plugin_options[site_js]" value="true" ' .$checked. '/>';
-			echo '<p>If you would like to add your own site JavaScript file, Boilerplate provides a starter file located in:</p>';
-			echo '<code>' .BP_THEME_URL. '/js/script-starter.js</code>';
-			echo '<p>Add what you want to that file and select this option.</p>';
-			echo '<p>Selecting this option will add the following code to your pages just before the <code>&lt;/body&gt;</code>:</p>';
-			echo '<code>&lt;script type=\'text/javascript\' src=\'' .BP_THEME_URL. '/js/script-starter.js?ver=x\'&gt;&lt;/script&gt;</code>';
-			echo '<p>(The single quotes and no-longer-necessary attributes are from WP, would like to fix that... maybe next update...)</p>';
-		}
-	endif; // site_js_setting
-
-	//	callback fn for cache_buster
-	if ( ! function_exists( 'cache_buster_setting' ) ):
-		function cache_buster_setting() {
-			$options = get_option('plugin_options');
-			$checked = (isset($options['cache_buster']) && $options['cache_buster']) ? 'checked="checked" ' : '';
-			$version = (isset($options['cache_buster_version']) && $options['cache_buster_version']) ? $options['cache_buster_version'] : '1';
-			echo '<input class="check-field" type="checkbox" name="plugin_options[cache_buster]" value="true" ' .$checked. '/>';
-			echo '<p>To force browsers to fetch a new version of a file, versus one it might already have cached, you can add a "cache buster" to the end of your CSS and JS files.  ';
-			echo 'To increment the cache buster version number, type something here:<br />';
-			echo '<input type="text" size="4" name="plugin_options[cache_buster_version]" value="'.$version.'"></p>';
-			echo '<p>Selecting this option will add the following code to the end of all of your CSS and JS file names on all of your pages:</p>';
-			echo '<code>?ver='.$version.'</code>';
-		}
-	endif; // cache_buster_setting
-
+	//	in case you need it...
+	if ( ! function_exists( 'audiology_section_cb' ) ):
+		function audiology_section_cb() {
+			$options = get_option('audiology_options');
 	//	callback fn for twitter_handle
 	if ( ! function_exists( 'twitter_setting' ) ):
 		function twitter_setting() {
-			$options = get_option('plugin_options');
+			$options = get_option('audiology_options');
 			$value = (isset($options['twitter']) && $options['twitter']) ? $options['twitter'] : '@';
-			echo '<input type="text" name="plugin_options[twitter]" value="'.$value.'" />';
+			echo '<input type="text" name="audiology_options[twitter]" value="'.$value.'" />';
 			echo '<p>Enter twitter account ID.</p>';
 		}
 	endif; // twitter_setting
@@ -355,12 +410,12 @@
 	//	callback fn for facebook_name
 	if ( ! function_exists( 'facebook_setting' ) ):
 		function facebook_setting() {
-			$options = get_option('plugin_options');
+			$options = get_option('audiology_options');
 			$value = (isset($options['facebook_name']) && $options['facebook_name']) ? $options['facebook_name'] : '';
-			echo '<input type="text" name="plugin_options[facebook_name]" value="'.$value.'" />';
+			echo '<input type="text" name="audiology_options[facebook_name]" value="'.$value.'" />';
 			echo '<p>Enter facebook account name.</p>';
 			$value = (isset($options['facebook_id']) && $options['facebook_id']) ? $options['facebook_id'] : '';
-			echo '<input type="text" name="plugin_options[facebook_id]" value="'.$value.'" />';
+			echo '<input type="text" name="audiology_options[facebook_id]" value="'.$value.'" />';
 			echo '<p>Enter Facebook account id.</p>';
 		}
 	endif; // facebook_setting
@@ -368,9 +423,9 @@
 	//	callback fn for googleplus
 	if ( ! function_exists( 'googleplus_setting' ) ):
 		function googleplus_setting() {
-			$options = get_option('plugin_options');
+			$options = get_option('audiology_options');
 			$value = (isset($options['googleplus']) && $options['googleplus']) ? $options['googleplus'] : '';
-			echo '<input type="text" name="plugin_options[googleplus]" value="'.$value.'" />';
+			echo '<input type="text" name="audiology_options[googleplus]" value="'.$value.'" />';
 			echo '<p>Enter Google+ account id.</p>';
 		}
 	endif; // googleplus_setting
@@ -378,9 +433,9 @@
 	//	callback fn for email
 	if ( ! function_exists( 'email_setting' ) ):
 		function email_setting() {
-			$options = get_option('plugin_options');
+			$options = get_option('audiology_options');
 			$value = (isset($options['scheduleVisit_email']) && $options['scheduleVisit_email']) ? $options['scheduleVisit_email'] : '';
-			echo '<input type="text" name="plugin_options[scheduleVisit_email]" value="'.$value.'" />';
+			echo '<input type="text" name="audiology_options[scheduleVisit_email]" value="'.$value.'" />';
 			echo '<p>Enter email address that Schedule Visit Emails should be sent to.</p>';
 		}
 	endif; // email_setting
@@ -388,9 +443,9 @@
 	//	callback fn for from email
 	if ( ! function_exists( 'from_email_setting' ) ):
 		function from_email_setting() {
-			$options = get_option('plugin_options');
+			$options = get_option('audiology_options');
 			$value = (isset($options['scheduleVisit_fromEmail']) && $options['scheduleVisit_fromEmail']) ? $options['scheduleVisit_fromEmail'] : '';
-			echo '<input type="text" name="plugin_options[scheduleVisit_fromEmail]" value="'.$value.'" />';
+			echo '<input type="text" name="audiology_options[scheduleVisit_fromEmail]" value="'.$value.'" />';
 			echo '<p>Enter email address that Schedule Vist emails should be sent from.</p>';
 		}
 	endif; 
@@ -398,19 +453,29 @@
 	//	callback fn for email success image
 	if ( ! function_exists( 'email_success_image' ) ):
 		function email_success_image() {
-			$options = get_option('plugin_options');
+			$options = get_option('audiology_options');
 			$value = (isset($options['emailSuccessImage']) && $options['emailSuccessImage']) ? $options['emailSuccessImage'] : '';
-			echo '<input type="text" name="plugin_options[emailSuccessImage]" value="'.$value.'" />';
+			echo '<input type="text" name="audiology_options[emailSuccessImage]" value="'.$value.'" />';
 			echo '<p>Enter name of image to display in email success modal window.</p>';
 		}
 	endif; 
+	
+	//	callback fn for email success message
+	if ( ! function_exists( 'email_success_message' ) ):
+		function email_success_message() {
+			$options = get_option('audiology_options');
+			$value = (isset($options['emailSuccessMessage']) && $options['emailSuccessMessage']) ? $options['emailSuccessMessage'] : '';
+			echo '<input type="text" name="audiology_options[emailSuccessMessage]" value="'.$value.'" />';
+			echo '<p>Enter message to display in email success modal window.</p>';
+		}
+	endif;
 
 	//	callback fn for pageWrapper
 	if ( ! function_exists( 'page_wrapper' ) ):
 		function page_wrapper() {
-			$options = get_option('plugin_options');
+			$options = get_option('audiology_options');
 			$value = (isset($options['pageWrapper']) && $options['pageWrapper']==1) ? 'checked="checked"' : '';
-			echo '<input type="checkbox" name="plugin_options[pageWrapper]" '.$value.' value="1" />';
+			echo '<input type="checkbox" name="audiology_options[pageWrapper]" '.$value.' value="1" />';
 			echo '<p>Wrap all content in page wrapper? Used for non repeating backround image.</p>';
 		}
 	endif; 
@@ -418,22 +483,84 @@
 	// callback fn for socialLaunch
 	if ( ! function_exists( 'social_launch') ):
 		function social_launch() {
-			$options = get_option('plugin_options');
+			$options = get_option('audiology_options');
 			$value = (isset($options['socialLaunch']) && $options['socialLaunch'] == 1) ? 'checked="checked"' : '';
-			echo '<input type="checkbox" name="plugin_options[socialLaunch]" '.$value.' value="1" />';
+			echo '<input type="checkbox" name="audiology_options[socialLaunch]" '.$value.' value="1" />';
 			echo '<p>Use social launch style footer?</p>';
 		}
 	endif;
 
-	// callback fn for socialLaunch
+	// callback fn for clinicLocations
 	if ( ! function_exists( 'clinic_locations') ):
 		function clinic_locations() {
-			$options = get_option('plugin_options');
+			$options = get_option('audiology_options');
 			$value = (isset($options['clinicLocations'])) ? $options['clinicLocations'] : '';
-			echo '<textarea name="plugin_options[clinicLocations]">'.$value.'</textarea>';
+			echo '<textarea name="audiology_options[clinicLocations]">'.$value.'</textarea>';
 			echo '<p>Enter HTML for clinic locations in contact popup.</p>';
 		}
 	endif;
+	
+	// callback fn for phoneNumbers
+	if ( ! function_exists( 'phone_numbers') ):
+		function phone_numbers() {
+			$options = get_option('audiology_options');
+			$value = (isset($options['phoneNumbers'])) ? $options['phoneNumbers'] : '';
+			echo '<textarea name="audiology_options[phoneNumbers]">'.$value.'</textarea>';
+			echo '<p>Enter HTML for clinic phone numbers in Call popup.</p>';
+		}
+	endif;
+	
+	// callback fn for phoneNumbers
+	if ( ! function_exists( 'yelp') ):
+		function yelp() {
+			$options = get_option('audiology_options');
+			$value = (isset($options['yelp']) && $options['yelp']) ? $options['yelp'] : '';
+			echo '<input type="text" name="audiology_options[yelp]" value="'.$value.'" />';
+			echo '<p>Enter info for yelp link.</p>';
+		}
+	endif;
+	}
+
+	// callback fn for headerLinks
+	if ( ! function_exists( 'header_links') ):
+		function header_links() {
+			$options = get_option('audiology_options');
+			$value = (isset($options['headerLinks'])) ? $options['headerLinks'] : '';
+			echo '<textarea name="audiology_options[headerLinks]">'.$value.'</textarea>';
+			echo '<p>Enter HTML for header links.</p>';
+		}
+	endif;
+
+	// callback fn for clinicLocations
+	if ( ! function_exists( 'footer_forms') ):
+		function footer_forms() {
+			$options = get_option('audiology_options');
+			$value = (isset($options['footerForms'])) ? $options['footerForms'] : '';
+			echo '<textarea name="audiology_options[footerForms]">'.$value.'</textarea>';
+			echo '<p>Enter HTML for footer forms.</p>';
+		}
+	endif;
+
+	// callback fn for clinicLocations
+	if ( ! function_exists( 'mobile_footer') ):
+		function mobile_footer() {
+			$options = get_option('audiology_options');
+			$value = (isset($options['mobileFooter'])) ? $options['mobileFooter'] : '';
+			echo '<textarea name="audiology_options[mobileFooter]">'.$value.'</textarea>';
+			echo '<p>Enter HTML for mobile footer.</p>';
+		}
+	endif;
+
+	// callback fn for phoneNumber
+	if ( ! function_exists( 'phone_number') ):
+		function phone_number() {
+			$options = get_option('audiology_options');
+			$value = (isset($options['phoneNumber']) && $options['phoneNumber']) ? $options['phoneNumber'] : '';
+			echo '<input type="text" name="audiology_options[phoneNumber]" value="'.$value.'" />';
+			echo '<p>Phone number for mobile site.</p>';
+		}
+	endif;
+endif; // audiology_section_cb
 
 
 /*	4)	Create functions to add above elements to pages */

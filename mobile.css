@@ -1,0 +1,67 @@
+/*
+  Theme Name: Fuel Medical ENT mobile
+*/
+
+/* RESET */
+/* ----------------------------------------- */
+
+/* Global reset */
+/* Based upon 'reset.css' in the Yahoo! User Interface Library: http://developer.yahoo.com/yui */
+*, html, body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, label, fieldset, img, input, p, blockquote, th, td { margin:0; padding:0; font-family:"Myriad Pro", Arial, sans-serif; }
+/*table { border-collapse:collapse; border-spacing:0 }*/
+fieldset, img { border:0 }
+address, caption, cite, code, dfn, em, strong, th, var { font-style:normal; font-weight:normal }
+ol, ul, li { list-style:none; }
+caption, th { text-align:left }
+h1, h2, h3, h4, h5, h6 { font-size:100%; font-weight:normal }
+q:before, q:after { content:''}
+
+/* Global reset-RESET */
+/* The below restores some sensible defaults */
+strong { font-weight: bold }
+em { font-style: italic }
+a img { border:none } /* Gets rid of IE's blue borders */
+a { outline:none } /* Gets rid of Firefox's dotted outline */
+div { position:relative; }
+/* END RESET */
+
+
+body { background:#f5f4f4; }
+#container { width:320px; margin:0 auto; }
+header {background:#000 url(images/mobile/header-bg.png) repeat-x; height: 80px; }
+header a { background:url(images/mobile/logo.png) center center no-repeat; display:block; height:80px; width:320px; text-indent:-9999px; }
+.button { background:url(images/mobile/button-overlay.png) 0 -5px repeat-x; border-radius:5px; display:block; text-align:center; margin:10px auto; color:#fff; text-transform:uppercase; text-decoration:none; text-shadow:1px 1px 3px #000; box-shadow:0px 2px 2px #000; font-weight:bold; line-height:25px; width:100px;}
+.phoneLink .button { background-color:#1cad60;}
+section ul li { background:#f5f3f3 url(images/mobile/nav-overlay.png) repeat-x; color:#fff; line-height:35px; width:300px; border-radius:5px; box-shadow:0 1px 1px #a2a1a1; margin:3px auto;}
+section ul li a { background:url(images/mobile/arrow.png) 270px center no-repeat; color:#fff; text-decoration:none; display:block; text-transform:uppercase; text-shadow:0 0 2px #b0aeae; font-weight:bold; text-align:center; }
+article { display:none; }
+.entry-content h2 { font-weight:bold; }
+.entry-content { padding:10px; color:#000; text-shadow:none; line-height:20px;}
+.entry-content a.mapLink { background:#1cad60 url(images/mobile/map-overlay.png) 0 -5px repeat-x; border-radius:5px; color:#fff; display:block; float:right; width:50px; height:50px; text-decoration:none; z-index:3000; text-shadow:1px 1px 3px #000; box-shadow:0px 2px 2px #000; font-weight:bold; line-height:25px; }
+.location { padding:5px;}
+.location a { text-decoration:underline; text-shadow:none; display:inline; color:#000; }
+.individ { overflow:hidden; background:#fff; border-radius:5px; margin:5px; padding:5px;}
+.individ .contactImg { text-align:left; float:left; margin-right:5px;}
+.individ .contactImg img { width:50px; height:50px; }
+.individ h2 { margin:2px 0 5px 5px; }
+.individ a.moreLink { background:none; color:#000; font-weight:normal; text-shadow:none; margin:5px 0 5px 5px; text-align:left; text-decoration:underline; text-transform:none; }
+
+p.bio { clear:both; display:none; }
+p.bio a { color:black; text-decoration:underline; text-shadow:none; }
+.contactForm { background:#131313 url(images/mobile/form-bg.png) repeat-x; padding:7px 15px; margin-top:12px; overflow:hidden; }
+.contactForm .formItem { margin:10px; }
+.contactForm label { display:block; color:#fff; }
+.contactForm input { width:100%; border:none; height:20px; }
+.contactForm input[type=checkbox] { width:auto; display:inline; }
+.contactForm input[type=checkbox]+label { display:inline; padding-left:5px; }
+.contactForm input[type=submit].button { background-color:#686868; float:right; font-size:14px; font-weight:normal; width:100px; }
+.socials { float:left; margin:10px;}
+.socials li { float:left; }
+.socials a { background:url(images/mobile/socials-bg.png); display:block; width:20px; height:19px; text-indent:-9999px; margin:0 1px; }
+.socials a#twitterBtn { background-position:0 0; }
+.socials a#faceBookBtn { background-position:-24px 0; }
+.socials a#googleBtn { background-position:-48px 0; }
+footer { background:#000 url(images/mobile/footer-bg.png) repeat-x; overflow:hidden;}
+footer p { color:#ffffff; text-align:center; padding:15px 0; font-size:12px; }
+footer a { color:#fff; }
+footer a.siteSwitcher { font-size:11px; text-align:center; color:white; display:block; margin:10px auto;}
